@@ -4,194 +4,560 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Admin — okuname</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/x-icon" href="icon.ico"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:#050505;color:#e5e5e5;min-height:100vh;padding:2.5rem 1.5rem}
-.wrap{max-width:960px;margin:0 auto}
-h1{font-family:'JetBrains Mono',monospace;font-size:1.2rem;margin-bottom:1.5rem;color:#22ff55}
-.card{background:#101010;border:1px solid #222;border-radius:8px;padding:1.5rem;margin-bottom:1.5rem}
-label{display:block;font-size:.85rem;margin-bottom:.3rem;color:#bbb}
-input{width:100%;padding:.55rem .7rem;margin-bottom:.8rem;border-radius:4px;border:1px solid #333;background:#050505;color:#eee;font-family:'JetBrains Mono',monospace;font-size:.8rem}
-button{font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:.55rem 1.1rem;border-radius:4px;border:1px solid #22ff55;background:#22ff55;color:#000;cursor:pointer}
-button.secondary{background:transparent;color:#aaa;border-color:#333;margin-left:.5rem}
-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;margin-top:.75rem}
-th,td{border:1px solid #222;padding:.4rem .55rem;text-align:left}
-th{background:#111;color:#888;font-weight:500}
-tbody tr:nth-child(even){background:#090909}
-.muted{color:#666;font-size:.8rem}
-.row{display:flex;flex-wrap:wrap;gap:1.5rem}
-.col{flex:1 1 260px}
-.field-inline{display:flex;gap:.5rem;align-items:center}
-.field-inline input{flex:1}
-.badge{display:inline-block;padding:.18rem .4rem;border-radius:999px;border:1px solid #333;font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#888;margin-left:.5rem}
+:root{
+  --bg:#050505;--bg2:#0a0a0a;--card:#0f0f0f;--card2:#141414;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --g1:#22ff55;--g2:#18cc44;--gglow:rgba(34,255,85,0.22);
+  --text:#e8e8e8;--text2:#888;--text3:#444;
+  --red:#ff4d4d;--yellow:#ffd24d;--blue:#4d9fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(34,255,85,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(34,255,85,.012) 1px,transparent 1px);background-size:28px 28px;z-index:0;pointer-events:none}
+.login-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:var(--bg)}
+.login-box{width:100%;max-width:380px;padding:0 1.5rem;animation:fadeUp .5s ease both}
+.login-logo{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--g1);margin-bottom:2.5rem;letter-spacing:.05em;text-shadow:0 0 16px var(--gglow)}
+.login-logo span{color:var(--text3)}
+.login-box h2{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text2);margin-bottom:1.75rem;letter-spacing:.08em;text-transform:uppercase}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-bottom:.4rem;letter-spacing:.06em;text-transform:uppercase}
+.field input{width:100%;padding:.65rem .8rem;background:var(--card);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus{border-color:rgba(34,255,85,.4);box-shadow:0 0 0 3px rgba(34,255,85,.06)}
+.login-btn{width:100%;margin-top:1.5rem;padding:.7rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;background:var(--g1);color:#000;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,box-shadow .15s}
+.login-btn:hover{background:#55ff7a;box-shadow:0 0 20px var(--gglow)}
+.login-error{margin-top:.9rem;font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--red);display:none;padding:.5rem .7rem;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2)}
+.login-shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.app{display:none;min-height:100vh;position:relative;z-index:1}
+.app.visible{display:block;animation:fadeUp .4s ease both}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:.75rem 2rem;background:rgba(5,5,5,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.topbar-left{display:flex;align-items:center;gap:1.25rem}
+.topbar-logo{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--g1);letter-spacing:.05em}
+.topbar-logo span{color:var(--text3)}
+.topbar-site-link{font-family:'Press Start 2P',monospace;font-size:.32rem;color:var(--text3);text-decoration:none;padding:.4rem .7rem;letter-spacing:.04em;position:relative;transition:color .2s;background:none;border:none;white-space:nowrap}
+.topbar-site-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--g1);transition:width .25s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px var(--g1)}
+.topbar-site-link:hover{color:var(--g1)}
+.topbar-site-link:hover::after{width:100%}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3)}
+.logout-btn{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);background:none;border:1px solid var(--border2);padding:.28rem .65rem;cursor:pointer;transition:color .15s,border-color .15s;letter-spacing:.04em}
+.logout-btn:hover{color:var(--red);border-color:rgba(255,77,77,.3)}
+.main{max-width:1080px;margin:0 auto;padding:2rem 2rem 4rem}
+.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border)}
+.tab{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:.6rem 1.2rem;cursor:pointer;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--g1);border-bottom-color:var(--g1)}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeUp .25s ease both}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);padding:1.5rem;position:relative}
+.card::before{content:'';position:absolute;top:-2px;left:-2px;width:5px;height:5px;background:var(--g1);opacity:.35}
+.card-title{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem}
+.card-title-right{margin-left:auto}
+.stat-tile{background:var(--card);border:1px solid var(--border);padding:1.25rem 1.5rem;position:relative;overflow:hidden}
+.stat-tile::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g1),transparent)}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:600;color:var(--g1);line-height:1;margin-bottom:.35rem;text-shadow:0 0 18px var(--gglow)}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.07em;text-transform:uppercase}
+.tbl{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.72rem;margin-top:.5rem}
+.tbl th{padding:.4rem .65rem;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);font-weight:500;letter-spacing:.05em;text-transform:uppercase;font-size:.62rem}
+.tbl td{padding:.38rem .65rem;border-bottom:1px solid var(--border);color:var(--text2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:rgba(255,255,255,.02);color:var(--text)}
+.tbl-bar{display:flex;align-items:center;gap:.6rem}
+.tbl-bar-fill{height:3px;background:var(--g1);opacity:.5;min-width:3px;transition:width .3s}
+.tbl-num{color:var(--g1);min-width:2rem;text-align:right}
+.empty-state{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);padding:1.5rem 0;text-align:center}
+.form-field{margin-bottom:1rem}
+.form-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem}
+.form-field input,.form-field textarea,.form-field select{width:100%;padding:.55rem .7rem;background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;transition:border-color .15s;resize:vertical}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:rgba(34,255,85,.35);box-shadow:0 0 0 3px rgba(34,255,85,.05)}
+.form-hint{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.form-row{display:flex;gap:.75rem;align-items:flex-end}
+.form-row .form-field{flex:1;margin-bottom:0}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0;display:inline-block}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;cursor:pointer;background:var(--border2);transition:background .2s}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text3);transition:transform .2s,background .2s}
+.toggle input:checked + .toggle-slider{background:rgba(34,255,85,.2);border:1px solid rgba(34,255,85,.4)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px);background:var(--g1);box-shadow:0 0 8px var(--gglow)}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;padding:.55rem 1.1rem;border:none;cursor:pointer;letter-spacing:.04em;transition:all .15s;display:inline-flex;align-items:center;gap:.45rem}
+.btn-primary{background:var(--g1);color:#000}
+.btn-primary:hover{background:#55ff7a;box-shadow:0 0 16px var(--gglow)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text3)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,77,77,.25)}
+.btn-danger:hover{background:rgba(255,77,77,.08);border-color:rgba(255,77,77,.5)}
+.btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.25rem}
+.badge{display:inline-flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:.2rem .5rem;border:1px solid;letter-spacing:.04em}
+.badge-green{color:var(--g1);border-color:rgba(34,255,85,.3);background:rgba(34,255,85,.06)}
+#toast{position:fixed;bottom:2rem;right:2rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;align-items:flex-end}
+.toast-item{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.6rem 1rem;border:1px solid;animation:toastIn .25s ease both;display:flex;align-items:center;gap:.5rem;max-width:320px}
+.toast-item.success{background:rgba(34,255,85,.08);border-color:rgba(34,255,85,.3);color:var(--g1)}
+.toast-item.error{background:rgba(255,77,77,.08);border-color:rgba(255,77,77,.3);color:var(--red)}
+.toast-item.info{background:rgba(77,159,255,.08);border-color:rgba(77,159,255,.3);color:var(--blue)}
+.toast-out{animation:toastOut .2s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(10px)}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--card);border:1px solid var(--border2);padding:2rem;max-width:360px;width:90%;animation:fadeUp .2s ease both}
+.modal-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text);margin-bottom:.6rem}
+.modal-desc{font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:1.5rem}
+.modal-btns{display:flex;gap:.5rem}
+
+/* Discount preview box */
+.discount-preview{
+  margin-top:1.5rem;padding:1rem;
+  background:var(--bg2);border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:.75rem;
+}
+.discount-preview-title{color:var(--text3);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem}
+.dp-row{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.3rem}
+.dp-current{font-size:1.1rem;color:var(--g1)}
+.dp-old{font-size:.72rem;color:var(--text3);text-decoration:line-through}
+.dp-badge{font-size:.6rem;color:#000;background:var(--g1);padding:.1rem .4rem}
+.dp-note{font-size:.65rem;color:var(--text3);margin-top:.2rem}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>okuname · admin</h1>
 
-  <div id="loginCard" class="card">
-    <p style="margin-bottom:.9rem;font-size:.9rem;color:#c5c5c5">Вход только для администратора.</p>
-    <label for="login">Логин</label>
-    <input id="login" autocomplete="off"/>
-    <label for="password">Пароль</label>
-    <input id="password" type="password" autocomplete="off"/>
-    <button id="loginBtn">Войти</button>
-    <span id="loginError" class="muted" style="margin-left:.75rem;color:#ff7777;display:none">Неверный логин или пароль</span>
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box" id="loginBox">
+    <div class="login-logo">okuname <span>·</span> admin</div>
+    <h2>Авторизация</h2>
+    <div class="field">
+      <label>Логин</label>
+      <input id="loginInput" autocomplete="off" placeholder="login"/>
+    </div>
+    <div class="field">
+      <label>Пароль</label>
+      <input id="passInput" type="password" autocomplete="off" placeholder="••••••••"/>
+    </div>
+    <button class="login-btn" id="loginBtn">Войти →</button>
+    <div class="login-error" id="loginError">Неверный логин или пароль</div>
   </div>
+</div>
 
-  <div id="adminUi" style="display:none">
-    <div class="row">
-      <div class="col">
+<div class="app" id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">okuname <span>·</span> admin</div>
+      <a class="topbar-site-link" href="index.html" target="_blank">← На сайт</a>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-time" id="topbarTime"></span>
+      <button class="logout-btn" id="logoutBtn">выйти</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" data-tab="analytics">Аналитика</button>
+      <button class="tab" data-tab="prices">Цены и скидки</button>
+      <button class="tab" data-tab="content">Контент</button>
+      <button class="tab" data-tab="settings">Настройки</button>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="tab-panel active" id="tab-analytics">
+      <div class="grid3" style="margin-bottom:1.5rem">
+        <div class="stat-tile"><div class="stat-num" id="statVisits">0</div><div class="stat-label">Всего визитов</div></div>
+        <div class="stat-tile"><div class="stat-num" id="statPages">0</div><div class="stat-label">Страниц открыто</div></div>
+        <div class="stat-tile"><div class="stat-num" id="statClicks">0</div><div class="stat-label">Кликов</div></div>
+      </div>
+      <div class="grid2">
         <div class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-            <h2 style="font-size:1rem">Статистика</h2>
-            <span id="visitsTotal" class="badge">visits: 0</span>
-          </div>
-          <p class="muted">Данные хранятся локально в браузере (localStorage).</p>
-          <h3 style="font-size:.9rem;margin-top:1rem;margin-bottom:.3rem">Посещения по страницам</h3>
-          <table id="pagesTable">
-            <thead><tr><th>Страница</th><th>Визиты</th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <h3 style="font-size:.9rem;margin-top:1rem;margin-bottom:.3rem">Клики по действиям</h3>
-          <table id="clicksTable">
-            <thead><tr><th>Элемент</th><th>Клики</th></tr></thead>
-            <tbody></tbody>
-          </table>
+          <div class="card-title">Страницы <span class="card-title-right" id="pagesCount"></span></div>
+          <table class="tbl" id="pagesTable"><thead><tr><th>Страница</th><th style="text-align:right">Визиты</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-title">Клики по элементам</div>
+          <table class="tbl" id="clicksTable"><thead><tr><th>Элемент</th><th style="text-align:right">Кликов</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
-      <div class="col">
+      <div class="btn-group">
+        <button class="btn btn-ghost" id="exportCsvBtn">↓ Экспорт CSV</button>
+        <button class="btn btn-danger" id="clearAnalyticsBtn">Очистить аналитику</button>
+      </div>
+    </div>
+
+    <!-- PRICES -->
+    <div class="tab-panel" id="tab-prices">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">
+        Управляй ценами, скидками и бейджами на главной странице. После сохранения — обнови главную (F5).
+      </p>
+      <div class="grid2">
+        <!-- Subscription -->
         <div class="card">
-          <h2 style="font-size:1rem;margin-bottom:.5rem">Цены</h2>
-          <p class="muted">Эти значения переопределяют цены на главной (подписка и под ключ).</p>
-          <div style="margin-top:.8rem">
-            <h3 style="font-size:.9rem;margin-bottom:.35rem">Subscription</h3>
-            <div class="field-inline">
-              <label for="subCurrent" style="margin:0;min-width:80px">Текущая</label>
-              <input id="subCurrent" placeholder="1 275 ₽/мес"/>
-            </div>
-            <div class="field-inline">
-              <label for="subOld" style="margin:0;min-width:80px">Старая</label>
-              <input id="subOld" placeholder="1 500 ₽"/>
-            </div>
+          <div class="card-title">
+            Subscription (подписка)
+            <span class="card-title-right">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3)">Показывать скидку</span>
+              <label class="toggle" style="margin-bottom:0;margin-left:.4rem"><input type="checkbox" id="subShowDiscount" checked/><span class="toggle-slider"></span></label>
+            </span>
           </div>
-          <div style="margin-top:1rem">
-            <h3 style="font-size:.9rem;margin-bottom:.35rem">Full Dev</h3>
-            <div class="field-inline">
-              <label for="fullCurrent" style="margin:0;min-width:80px">Текущая</label>
-              <input id="fullCurrent" placeholder="от 8 500 ₽"/>
-            </div>
-            <div class="field-inline">
-              <label for="fullOld" style="margin:0;min-width:80px">Старая</label>
-              <input id="fullOld" placeholder="от 10 000 ₽"/>
-            </div>
+          <div class="form-row">
+            <div class="form-field"><label>Текущая цена</label><input id="subCurrent" placeholder="1 275 ₽/мес"/></div>
+            <div class="form-field"><label>Зачёркнутая цена</label><input id="subOld" placeholder="1 500 ₽"/></div>
           </div>
-          <div style="margin-top:1.1rem">
-            <button id="savePrices">Сохранить цены</button>
-            <button id="resetPrices" class="secondary">Сбросить</button>
+          <div class="form-field" style="margin-top:.75rem">
+            <label>Метка скидки (бейдж)</label>
+            <input id="subBadge" placeholder="−15% СЕЙЧАС"/>
+            <div class="form-hint">Показывается на зелёном бейдже рядом с тегом Subscription</div>
+          </div>
+          <div class="form-field">
+            <label>Примечание под ценой</label>
+            <input id="subNote" placeholder="1 275 ₽ за 1 месяц"/>
+            <div class="form-hint">Серый текст под ценой — условие, срок, примечание</div>
+          </div>
+
+          <div class="discount-preview">
+            <div class="discount-preview-title">Предпросмотр</div>
+            <div class="dp-row">
+              <span class="dp-current" id="dpSubCurrent">1 275 ₽/мес</span>
+              <span class="dp-old" id="dpSubOld">1 500 ₽</span>
+              <span class="dp-badge" id="dpSubBadge">−15% СЕЙЧАС</span>
+            </div>
+            <div class="dp-note" id="dpSubNote">1 275 ₽ за 1 месяц</div>
           </div>
         </div>
+
+        <!-- Full Dev -->
+        <div class="card">
+          <div class="card-title">
+            Full Dev (под ключ)
+            <span class="card-title-right">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3)">Показывать скидку</span>
+              <label class="toggle" style="margin-bottom:0;margin-left:.4rem"><input type="checkbox" id="fullShowDiscount" checked/><span class="toggle-slider"></span></label>
+            </span>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>Текущая цена</label><input id="fullCurrent" placeholder="от 8 500 ₽"/></div>
+            <div class="form-field"><label>Зачёркнутая цена</label><input id="fullOld" placeholder="от 10 000 ₽"/></div>
+          </div>
+          <div class="form-field" style="margin-top:.75rem">
+            <label>Метка скидки (бейдж)</label>
+            <input id="fullBadge" placeholder="−15% СЕЙЧАС"/>
+            <div class="form-hint">Показывается на зелёном бейдже рядом с тегом Full Dev</div>
+          </div>
+          <div class="form-field">
+            <label>Примечание под ценой</label>
+            <input id="fullNote" placeholder="фиксированная цена под задачу"/>
+            <div class="form-hint">Серый текст под ценой — условие, срок, примечание</div>
+          </div>
+
+          <div class="discount-preview">
+            <div class="discount-preview-title">Предпросмотр</div>
+            <div class="dp-row">
+              <span class="dp-current" id="dpFullCurrent">от 8 500 ₽</span>
+              <span class="dp-old" id="dpFullOld">от 10 000 ₽</span>
+              <span class="dp-badge" id="dpFullBadge">−15% СЕЙЧАС</span>
+            </div>
+            <div class="dp-note" id="dpFullNote">фиксированная цена под задачу</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" id="savePricesBtn">💾 Сохранить цены</button>
+        <button class="btn btn-ghost" id="previewSiteBtn">↗ Открыть сайт</button>
+        <button class="btn btn-danger" id="resetPricesBtn">Сбросить всё</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="tab-panel" id="tab-content">
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-title">
+          Баннер на главной
+          <span class="card-title-right">
+            <label class="toggle" style="margin-bottom:0"><input type="checkbox" id="bannerEnabled"/><span class="toggle-slider"></span></label>
+          </span>
+        </div>
+        <div class="form-field"><label>Текст баннера</label><input id="bannerText" placeholder="🔥 Скидка 20% до конца месяца — напиши в Telegram"/></div>
+        <div class="form-field">
+          <label>Тип баннера</label>
+          <select id="bannerType">
+            <option value="info">Синий — информация</option>
+            <option value="green">Зелёный — акция/скидка</option>
+            <option value="warn">Жёлтый — предупреждение</option>
+          </select>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" id="saveBannerBtn">Сохранить баннер</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          Статус «Доступен для проектов»
+          <span class="card-title-right">
+            <label class="toggle" style="margin-bottom:0"><input type="checkbox" id="statusEnabled" checked/><span class="toggle-slider"></span></label>
+          </span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1rem">Управляет индикатором в hero-секции. Если выключен — точка становится красной.</p>
+        <div class="form-field"><label>Текст статуса</label><input id="statusText" placeholder="ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ"/></div>
+        <div class="btn-group"><button class="btn btn-primary" id="saveStatusBtn">Сохранить</button></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-title">Смена пароля</div>
+        <div class="form-field"><label>Новый логин</label><input id="newLogin" autocomplete="off" placeholder="admin"/></div>
+        <div class="form-field"><label>Новый пароль</label><input id="newPass" type="password" placeholder="••••••••"/></div>
+        <div class="form-field"><label>Повтор пароля</label><input id="newPass2" type="password" placeholder="••••••••"/></div>
+        <div class="btn-group"><button class="btn btn-primary" id="savePassBtn">Сохранить пароль</button></div>
+        <p style="margin-top:.85rem;font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--text3)">После смены — новый хэш появится в консоли браузера (F12). Впиши его в строку HASH_HEX.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--red)">Опасная зона</div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem">Удаляет всю сохранённую информацию: аналитику, цены, контент. Данные входа сохранятся.</p>
+        <button class="btn btn-danger" id="clearAllBtn">Очистить все данные</button>
       </div>
     </div>
   </div>
 </div>
 
+<div id="toast"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Подтверждение</div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-btns">
+      <button class="btn btn-danger" id="modalConfirm">Подтвердить</button>
+      <button class="btn btn-ghost" id="modalCancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const HASH_HEX = '6dca731954c22aeda894713a38fd02971e675e65153367cc91547b89219b4d46';
-const ANALYTICS_KEY = 'oku_analytics_v1';
-const PRICING_KEY = 'oku_pricing_v1';
+const ANALYTICS_KEY='oku_analytics_v1',PRICING_KEY='oku_pricing_v1',CONTENT_KEY='oku_content_v1';
+let HASH_HEX=localStorage.getItem('oku_admin_hash')||'6dca731954c22aeda894713a38fd02971e675e65153367cc91547b89219b4d46';
 
-async function sha256Hex(str){
-  const enc = new TextEncoder().encode(str);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+async function sha256Hex(s){const e=new TextEncoder().encode(s);const b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+function ls(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch{return null}}
+function lsSave(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+
+function toast(msg,type='success',dur=3000){
+  const c=document.getElementById('toast'),el=document.createElement('div');
+  el.className=`toast-item ${type}`;
+  el.innerHTML=`<span>${{success:'✓',error:'✕',info:'i'}[type]||'·'}</span> ${msg}`;
+  c.appendChild(el);
+  setTimeout(()=>{el.classList.add('toast-out');setTimeout(()=>el.remove(),220)},dur);
 }
 
-function loadAnalytics(){
-  try{
-    const raw = localStorage.getItem(ANALYTICS_KEY);
-    return raw ? JSON.parse(raw) : {visits:0,pages:{},clicks:{}};
-  }catch(e){
-    return {visits:0,pages:{},clicks:{}};
-  }
+let modalCb=null;
+function showConfirm(title,desc,cb){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalDesc').textContent=desc;
+  modalCb=cb;document.getElementById('modal').classList.add('open');
 }
+document.getElementById('modalConfirm').onclick=()=>{document.getElementById('modal').classList.remove('open');if(modalCb)modalCb();modalCb=null};
+document.getElementById('modalCancel').onclick=()=>{document.getElementById('modal').classList.remove('open');modalCb=null};
 
-function loadPrices(){
-  try{
-    const raw = localStorage.getItem(PRICING_KEY);
-    return raw ? JSON.parse(raw) : {};
-  }catch(e){return {}}
-}
-
-function savePrices(p){localStorage.setItem(PRICING_KEY,JSON.stringify(p));}
-
-document.getElementById('loginBtn').addEventListener('click',async()=>{
-  const login = document.getElementById('login').value.trim();
-  const pass = document.getElementById('password').value;
-  const err = document.getElementById('loginError');
+// LOGIN
+document.getElementById('loginBtn').addEventListener('click',doLogin);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('passInput').focus()});
+async function doLogin(){
+  const login=document.getElementById('loginInput').value.trim();
+  const pass=document.getElementById('passInput').value;
+  const err=document.getElementById('loginError'),box=document.getElementById('loginBox');
   err.style.display='none';
-  const h = await sha256Hex(login+':'+pass);
+  const h=await sha256Hex(login+':'+pass);
   if(h!==HASH_HEX){
-    err.style.display='inline';
-    return;
+    err.style.display='block';
+    box.classList.remove('login-shake');void box.offsetWidth;box.classList.add('login-shake');return;
   }
-  document.getElementById('loginCard').style.display='none';
-  document.getElementById('adminUi').style.display='block';
-  renderAnalytics();
-  initPricingForm();
+  document.getElementById('loginWrap').style.display='none';
+  const app=document.getElementById('app');app.style.display='block';app.classList.add('visible');
+  initApp();
+}
+
+// CLOCK
+function updateClock(){
+  const n=new Date();
+  document.getElementById('topbarTime').textContent=
+    n.toLocaleDateString('ru',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+
+    n.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock,1000);
+
+// TABS
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
 });
 
+// LOGOUT
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('passInput').value='';
+});
+
+// ANALYTICS
+function loadAnalytics(){return ls(ANALYTICS_KEY)||{visits:0,pages:{},clicks:{}}}
 function renderAnalytics(){
-  const data = loadAnalytics();
-  document.getElementById('visitsTotal').textContent = 'visits: '+(data.visits||0);
-  const pagesTbody = document.querySelector('#pagesTable tbody');
-  pagesTbody.innerHTML='';
-  Object.entries(data.pages||{}).sort((a,b)=>b[1]-a[1]).forEach(([page,count])=>{
+  const data=loadAnalytics();
+  const totalClicks=Object.values(data.clicks||{}).reduce((a,b)=>a+b,0);
+  const totalPages=Object.values(data.pages||{}).reduce((a,b)=>a+b,0);
+  document.getElementById('statVisits').textContent=data.visits||0;
+  document.getElementById('statPages').textContent=totalPages;
+  document.getElementById('statClicks').textContent=totalClicks;
+  const pages=Object.entries(data.pages||{}).sort((a,b)=>b[1]-a[1]);
+  const maxP=pages[0]?.[1]||1;
+  document.getElementById('pagesCount').innerHTML=`<span class="badge badge-green">${pages.length} стр.</span>`;
+  const pTbody=document.querySelector('#pagesTable tbody');pTbody.innerHTML='';
+  if(!pages.length){pTbody.innerHTML=`<tr><td colspan="2" class="empty-state">Нет данных</td></tr>`}
+  pages.forEach(([page,count])=>{
+    const pct=Math.max(8,Math.round(count/maxP*100));
     const tr=document.createElement('tr');
-    tr.innerHTML='<td>'+page+'</td><td>'+count+'</td>';
-    pagesTbody.appendChild(tr);
+    tr.innerHTML=`<td>${page}</td><td><div class="tbl-bar"><div class="tbl-bar-fill" style="width:${pct}px"></div><span class="tbl-num">${count}</span></div></td>`;
+    pTbody.appendChild(tr);
   });
-  const clicksTbody = document.querySelector('#clicksTable tbody');
-  clicksTbody.innerHTML='';
-  Object.entries(data.clicks||{}).sort((a,b)=>b[1]-a[1]).slice(0,40).forEach(([id,count])=>{
+  const clicks=Object.entries(data.clicks||{}).sort((a,b)=>b[1]-a[1]).slice(0,30);
+  const maxC=clicks[0]?.[1]||1;
+  const cTbody=document.querySelector('#clicksTable tbody');cTbody.innerHTML='';
+  if(!clicks.length){cTbody.innerHTML=`<tr><td colspan="2" class="empty-state">Нет данных</td></tr>`}
+  clicks.forEach(([id,count])=>{
+    const pct=Math.max(8,Math.round(count/maxC*100));
     const tr=document.createElement('tr');
-    tr.innerHTML='<td>'+id.replace(/</g,'&lt;')+'</td><td>'+count+'</td>';
-    clicksTbody.appendChild(tr);
+    tr.innerHTML=`<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${id.replace(/</g,'&lt;')}</td><td><div class="tbl-bar"><div class="tbl-bar-fill" style="width:${pct}px"></div><span class="tbl-num">${count}</span></div></td>`;
+    cTbody.appendChild(tr);
   });
 }
+document.getElementById('exportCsvBtn').addEventListener('click',()=>{
+  const data=loadAnalytics();let csv='Тип,Ключ,Значение\n';
+  Object.entries(data.pages||{}).forEach(([k,v])=>{csv+=`Страница,"${k}",${v}\n`});
+  Object.entries(data.clicks||{}).forEach(([k,v])=>{csv+=`Клик,"${k.replace(/"/g,'""')}",${v}\n`});
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='okuname_analytics_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  toast('CSV экспортирован');
+});
+document.getElementById('clearAnalyticsBtn').addEventListener('click',()=>{
+  showConfirm('Очистить аналитику?','Все данные о визитах и кликах будут удалены.',()=>{
+    localStorage.removeItem(ANALYTICS_KEY);renderAnalytics();toast('Аналитика очищена','info');
+  });
+});
 
+// PRICES — live preview update
+function updateDiscountPreview(){
+  document.getElementById('dpSubCurrent').textContent=document.getElementById('subCurrent').value||'1 275 ₽/мес';
+  document.getElementById('dpSubOld').textContent=document.getElementById('subOld').value||'1 500 ₽';
+  document.getElementById('dpSubBadge').textContent=document.getElementById('subBadge').value||'−15% СЕЙЧАС';
+  document.getElementById('dpSubNote').textContent=document.getElementById('subNote').value||'1 275 ₽ за 1 месяц';
+  document.getElementById('dpSubBadge').style.display=document.getElementById('subShowDiscount').checked?'':'none';
+
+  document.getElementById('dpFullCurrent').textContent=document.getElementById('fullCurrent').value||'от 8 500 ₽';
+  document.getElementById('dpFullOld').textContent=document.getElementById('fullOld').value||'от 10 000 ₽';
+  document.getElementById('dpFullBadge').textContent=document.getElementById('fullBadge').value||'−15% СЕЙЧАС';
+  document.getElementById('dpFullNote').textContent=document.getElementById('fullNote').value||'фиксированная цена под задачу';
+  document.getElementById('dpFullBadge').style.display=document.getElementById('fullShowDiscount').checked?'':'none';
+}
+['subCurrent','subOld','subBadge','subNote','fullCurrent','fullOld','fullBadge','fullNote'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',updateDiscountPreview);
+});
+['subShowDiscount','fullShowDiscount'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',updateDiscountPreview);
+});
+
+function loadPrices(){return ls(PRICING_KEY)||{}}
 function initPricingForm(){
-  const p = loadPrices();
-  document.getElementById('subCurrent').value = p.subscription?.current || '';
-  document.getElementById('subOld').value = p.subscription?.old || '';
-  document.getElementById('fullCurrent').value = p.full?.current || '';
-  document.getElementById('fullOld').value = p.full?.old || '';
+  const p=loadPrices();
+  document.getElementById('subCurrent').value=p.subscription?.current||'';
+  document.getElementById('subOld').value=p.subscription?.old||'';
+  document.getElementById('subBadge').value=p.subscription?.badge||'';
+  document.getElementById('subNote').value=p.subscription?.note||'';
+  document.getElementById('subShowDiscount').checked=p.hideSubDiscount!==true;
+  document.getElementById('fullCurrent').value=p.full?.current||'';
+  document.getElementById('fullOld').value=p.full?.old||'';
+  document.getElementById('fullBadge').value=p.full?.badge||'';
+  document.getElementById('fullNote').value=p.full?.note||'';
+  document.getElementById('fullShowDiscount').checked=p.hideFullDiscount!==true;
+  updateDiscountPreview();
 }
-
-document.getElementById('savePrices').addEventListener('click',()=>{
-  const p = {
+document.getElementById('savePricesBtn').addEventListener('click',()=>{
+  lsSave(PRICING_KEY,{
     subscription:{
       current:document.getElementById('subCurrent').value.trim(),
-      old:document.getElementById('subOld').value.trim()
+      old:document.getElementById('subOld').value.trim(),
+      badge:document.getElementById('subBadge').value.trim(),
+      note:document.getElementById('subNote').value.trim()
     },
     full:{
       current:document.getElementById('fullCurrent').value.trim(),
-      old:document.getElementById('fullOld').value.trim()
-    }
-  };
-  savePrices(p);
-  alert('Цены сохранены. Обнови главную страницу, чтобы увидеть изменения.');
+      old:document.getElementById('fullOld').value.trim(),
+      badge:document.getElementById('fullBadge').value.trim(),
+      note:document.getElementById('fullNote').value.trim()
+    },
+    hideSubDiscount:!document.getElementById('subShowDiscount').checked,
+    hideFullDiscount:!document.getElementById('fullShowDiscount').checked
+  });
+  toast('Цены сохранены — обнови главную страницу (F5)');
+});
+document.getElementById('previewSiteBtn').addEventListener('click',()=>{window.open('index.html','_blank')});
+document.getElementById('resetPricesBtn').addEventListener('click',()=>{
+  showConfirm('Сбросить цены?','Цены вернутся к значениям по умолчанию.',()=>{
+    localStorage.removeItem(PRICING_KEY);initPricingForm();toast('Цены сброшены','info');
+  });
 });
 
-document.getElementById('resetPrices').addEventListener('click',()=>{
-  localStorage.removeItem(PRICING_KEY);
-  initPricingForm();
+// CONTENT
+function loadContent(){return ls(CONTENT_KEY)||{}}
+function initContentForm(){
+  const c=loadContent();
+  document.getElementById('bannerEnabled').checked=!!c.banner?.enabled;
+  document.getElementById('bannerText').value=c.banner?.text||'';
+  document.getElementById('bannerType').value=c.banner?.type||'info';
+  document.getElementById('statusEnabled').checked=c.status?.enabled!==false;
+  document.getElementById('statusText').value=c.status?.text||'';
+}
+document.getElementById('saveBannerBtn').addEventListener('click',()=>{
+  const c=loadContent();
+  c.banner={enabled:document.getElementById('bannerEnabled').checked,text:document.getElementById('bannerText').value.trim(),type:document.getElementById('bannerType').value};
+  lsSave(CONTENT_KEY,c);toast('Баннер сохранён — обнови главную (F5)');
 });
+document.getElementById('saveStatusBtn').addEventListener('click',()=>{
+  const c=loadContent();
+  c.status={enabled:document.getElementById('statusEnabled').checked,text:document.getElementById('statusText').value.trim()};
+  lsSave(CONTENT_KEY,c);toast('Статус сохранён — обнови главную (F5)');
+});
+
+// SETTINGS
+document.getElementById('savePassBtn').addEventListener('click',async()=>{
+  const login=document.getElementById('newLogin').value.trim();
+  const p1=document.getElementById('newPass').value,p2=document.getElementById('newPass2').value;
+  if(!login||!p1){toast('Заполни логин и пароль','error');return}
+  if(p1!==p2){toast('Пароли не совпадают','error');return}
+  const h=await sha256Hex(login+':'+p1);
+  localStorage.setItem('oku_admin_hash',h);HASH_HEX=h;
+  toast('Пароль сохранён. Хэш выведен в консоль (F12)','info',5000);
+  console.log('=== NEW ADMIN HASH ===\n'+h+'\n=====================');
+  document.getElementById('newPass').value='';document.getElementById('newPass2').value='';
+});
+document.getElementById('clearAllBtn').addEventListener('click',()=>{
+  showConfirm('Очистить все данные?','Аналитика, цены и контент будут удалены. Данные входа сохранятся.',()=>{
+    [ANALYTICS_KEY,PRICING_KEY,CONTENT_KEY].forEach(k=>localStorage.removeItem(k));
+    renderAnalytics();initPricingForm();initContentForm();toast('Все данные очищены','info');
+  });
+});
+
+function initApp(){updateClock();renderAnalytics();initPricingForm();initContentForm()}
 </script>
 </body>
 </html>
-
