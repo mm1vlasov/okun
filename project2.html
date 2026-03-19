@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SANG Bot — Кадровый аудит | okuname</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060606;--bg2:#0a0a0a;--card:#101010;--card2:#161616;
+  --border:#1e1e1e;--border2:#2c2c2c;
+  --g1:#22ff55;--g2:#18cc44;--g3:#55ff7a;
+  --gdim:rgba(34,255,85,0.08);--gglow:rgba(34,255,85,0.28);
+  --text:#ebebeb;--text2:#888;--text3:#555;--text4:#2e2e2e;
+  --nav-h:68px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;line-height:1.6}
+/* (removed custom cursor) */
+#fluid-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.01) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);background-size:22px 22px;z-index:1;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.09) 2px,rgba(0,0,0,.09) 3px);z-index:2;pointer-events:none}
+
+#pixel-layer{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.bg-px{position:absolute;width:3px;height:3px;background:rgba(34,255,85,.55);opacity:.75;animation:twinkle 2.6s steps(1) infinite,pxfloat 8s linear infinite;transform:translate3d(0,0,0)}
+.bg-px.big{width:5px;height:5px;opacity:.7}
+@keyframes pxfloat{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(0,-18px,0)}}
+
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes logoFlicker{0%,95%,100%{opacity:1}96%{opacity:.55}97.5%{opacity:1}98.8%{opacity:.35}}
+@keyframes twinkle{0%,75%,100%{opacity:.7}80%{opacity:0}90%{opacity:.3}}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.2rem,5vw,4rem);height:var(--nav-h);background:rgba(6,6,6,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2)}
+.nav-logo{font-family:'Press Start 2P',monospace;font-size:.72rem;color:var(--g1);text-decoration:none;letter-spacing:.05em;animation:logoFlicker 5s infinite;text-shadow:0 0 10px rgba(34,255,85,.5);flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:.35rem;list-style:none}
+.nav-links a{font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;color:var(--text2);text-decoration:none;padding:.42rem .85rem;border-radius:6px;transition:background .18s,color .18s}
+.nav-links a:hover{background:rgba(34,255,85,.12);color:#fff}
+.nav-back{display:inline-flex;align-items:center;gap:.45rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);text-decoration:none;transition:color .15s;padding:.42rem .85rem;border-radius:6px}
+.nav-back:hover{color:var(--g1);background:var(--gdim)}
+.nav-cta{font-family:'Press Start 2P',monospace !important;font-size:.4rem !important;color:#000 !important;background:var(--g1) !important;padding:.52rem 1.05rem !important;letter-spacing:.04em;transition:all .15s !important;cursor:pointer;clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px);border-radius:0 !important;white-space:nowrap}
+.nav-cta:hover{background:var(--g3) !important;box-shadow:0 0 14px var(--gglow) !important;color:#000 !important}
+.nav-mobile-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.nav-mobile-btn span{display:block;width:22px;height:2px;background:var(--text2)}
+@media(max-width:820px){.nav-links{display:none}.nav-mobile-btn{display:flex}}
+
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1.2rem,5vw,4rem)}
+section{position:relative;z-index:10}
+
+.proj-hero{min-height:60vh;display:flex;align-items:flex-end;padding:calc(var(--nav-h) + 4rem) clamp(1.2rem,5vw,4rem) 4rem;position:relative;z-index:10;border-bottom:1px solid var(--border)}
+.proj-hero-inner{max-width:1100px;margin:0 auto;width:100%}
+.proj-hero-top{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.proj-back{display:inline-flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text3);text-decoration:none;transition:color .15s}
+.proj-back:hover{color:var(--g1)}
+.proj-num{font-family:'Press Start 2P',monospace;font-size:.5rem;color:var(--text4);letter-spacing:.06em}
+.proj-badge-live{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--g1);border:1px solid rgba(34,255,85,.3);padding:.15rem .5rem;margin-left:auto}
+.proj-title-big{font-family:'Press Start 2P',monospace;font-size:clamp(.85rem,2.2vw,1.5rem);line-height:2;letter-spacing:.03em;color:var(--text);margin-bottom:1rem;animation:fadeUp .7s ease both}
+.proj-title-big span{color:var(--g1)}
+.proj-hero-sub{font-family:'Inter',sans-serif;font-size:1.05rem;color:var(--text2);max-width:620px;line-height:1.75;margin-bottom:2rem;animation:fadeUp .7s ease .15s both}
+.proj-hero-tags{display:flex;flex-wrap:wrap;gap:.5rem;animation:fadeUp .7s ease .25s both}
+.ptag{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);border:1px solid var(--border2);padding:.2rem .55rem;letter-spacing:.05em;transition:border-color .2s,color .2s}
+.ptag:hover{border-color:rgba(34,255,85,.3);color:var(--g1)}
+
+.features-section{padding:5rem 0}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.5rem}
+@media(max-width:900px){.features-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.features-grid{grid-template-columns:1fr}}
+
+.feat-card{background:rgba(14,14,14,.85);border:1px solid var(--border2);padding:1.5rem;position:relative;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s,border-color .22s;cursor:default;backdrop-filter:blur(4px)}
+.feat-card::before{content:'';position:absolute;top:-3px;left:-3px;width:6px;height:6px;background:var(--g1);opacity:.4;transition:opacity .2s}
+.feat-card:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 20px rgba(34,255,85,.08);border-color:rgba(34,255,85,.3)}
+.feat-card:hover::before{opacity:1;box-shadow:0 0 8px var(--g1)}
+.feat-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;background:var(--gdim);border:1px solid rgba(34,255,85,.15)}
+.feat-icon svg{width:22px;height:22px;fill:var(--g1);filter:drop-shadow(0 0 4px rgba(34,255,85,.3));transition:filter .25s,transform .25s;image-rendering:pixelated}
+.feat-card:hover .feat-icon svg{filter:drop-shadow(0 0 10px var(--g1));transform:scale(1.15)}
+.feat-card h3{font-family:'Press Start 2P',monospace;font-size:.52rem;color:var(--text);margin-bottom:.6rem;line-height:1.9;letter-spacing:.03em}
+.feat-card p{font-family:'Inter',sans-serif;font-size:.88rem;color:var(--text2);line-height:1.65}
+.feat-card ul{list-style:none;margin-top:.65rem;display:flex;flex-direction:column;gap:.35rem}
+.feat-card ul li{
+  font-family:'Inter',sans-serif;font-size:.85rem;
+  color:var(--text2);display:flex;
+  align-items:flex-start;gap:.5rem;
+  position:relative;
+}
+.feat-card ul li::before{
+  content:'■';
+  color:var(--g1);
+  font-size:.63rem;
+  flex-shrink:0;
+  margin-top:.42em;
+  animation:bulletPulse 1.6s ease-in-out infinite;
+}
+
+/* HR WORKFLOW */
+.workflow-section{padding:2rem 0 5rem}
+.workflow-steps{display:flex;flex-direction:column;gap:0;max-width:800px;margin-top:2.5rem}
+.wf-step{display:flex;gap:1.5rem;padding-bottom:2.5rem;position:relative;align-items:flex-start}
+.wf-step:not(:last-child)::before{content:'';position:absolute;left:21px;top:46px;bottom:0;width:1px;background:repeating-linear-gradient(to bottom,#2c2c2c 0,#2c2c2c 6px,transparent 6px,transparent 10px)}
+.wf-num{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--gdim);border:1px solid rgba(34,255,85,.3);font-family:'Press Start 2P',monospace;font-size:.62rem;color:var(--g1);clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px)}
+.wf-body{padding-top:.55rem;flex:1}
+.wf-body h3{font-family:'Press Start 2P',monospace;font-size:.52rem;line-height:2;color:var(--text);margin-bottom:.4rem;letter-spacing:.03em}
+.wf-body p{font-family:'Inter',sans-serif;font-size:.9rem;color:var(--text2);line-height:1.65;margin-bottom:.65rem}
+.wf-demo{background:rgba(8,8,8,.85);border:1px solid var(--border2);padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.85;color:var(--text3)}
+.wf-demo .cmd{color:var(--g1)}.wf-demo .arg{color:#7cb8ff}.wf-demo .ok{color:var(--g1)}.wf-demo .hi{color:var(--text)}.wf-demo .dim{color:var(--text4)}.wf-demo .row{display:block}
+
+/* ROSTER TABLE */
+.roster-section{padding:2rem 0 5rem}
+.roster-table{width:100%;border-collapse:collapse;margin-top:2rem;font-family:'JetBrains Mono',monospace;font-size:.75rem}
+.roster-table th{background:rgba(14,14,14,.9);border:1px solid var(--border2);padding:.65rem 1rem;text-align:left;color:var(--text3);font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:.62rem}
+.roster-table td{border:1px solid var(--border);padding:.6rem 1rem;color:var(--text2);font-size:.78rem}
+.roster-table tr:hover td{background:rgba(34,255,85,.03);color:var(--text)}
+.rank-badge{display:inline-block;padding:.1rem .4rem;font-size:.6rem;border:1px solid var(--border2);color:var(--text3);letter-spacing:.05em}
+.rank-badge.high{border-color:rgba(34,255,85,.3);color:var(--g1)}
+.rank-badge.mid{border-color:rgba(100,150,255,.3);color:#7cb8ff}
+.rank-badge.low{border-color:var(--border2);color:var(--text4)}
+@media(max-width:600px){.roster-table{font-size:.65rem}.roster-table th,.roster-table td{padding:.5rem .6rem}}
+
+.showcase-section{padding:2rem 0 4rem}
+.showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem}
+@media(max-width:700px){.showcase-grid{grid-template-columns:1fr}}
+.demo-card{background:rgba(10,10,10,.9);border:1px solid var(--border2);padding:0;overflow:hidden;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s,border-color .22s;position:relative;backdrop-filter:blur(4px)}
+.demo-card::before{content:'';position:absolute;top:-3px;left:-3px;width:6px;height:6px;background:var(--g1);z-index:1}
+.demo-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.4),0 0 18px rgba(34,255,85,.08);border-color:rgba(34,255,85,.25)}
+.demo-header{background:rgba(8,8,8,.9);padding:.6rem 1rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.5rem}
+.demo-dot{width:8px;height:8px}.demo-dot.r{background:#ff453a}.demo-dot.y{background:#ffd60a}.demo-dot.g{background:var(--g1);box-shadow:0 0 4px var(--g1)}
+.demo-label{font-family:'Inter',sans-serif;font-size:.7rem;color:var(--text3);margin-left:.5rem;font-weight:500}
+.demo-body{padding:.9rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.85;color:var(--text2)}
+.demo-body .cmd{color:var(--g1)}.demo-body .arg{color:#7cb8ff}.demo-body .out{color:var(--text2)}.demo-body .ok{color:var(--g1)}.demo-body .err{color:#ff6b6b}.demo-body .dim{color:var(--text4)}.demo-body .hi{color:var(--text)}
+.demo-body .wf-embed{margin-top:0}
+.demo-row{display:block;margin-bottom:.1rem}
+
+.proj-cta{background:rgba(8,8,8,.7);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:3.5rem clamp(1.2rem,5vw,4rem);display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;position:relative;z-index:10}
+.proj-cta-text h3{font-family:'Press Start 2P',monospace;font-size:.7rem;line-height:2;color:var(--text);margin-bottom:.5rem}
+.proj-cta-text p{font-family:'Inter',sans-serif;font-size:.92rem;color:var(--text2);line-height:1.65}
+.proj-cta-btns{display:flex;gap:.85rem;flex-wrap:wrap}
+footer{background:rgba(6,6,6,.85);border-top:1px solid var(--border);padding:2.5rem clamp(1.2rem,5vw,4rem);position:relative;z-index:10}
+.footer-bottom{max-width:1100px;margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+.section-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--g1);letter-spacing:.1em;margin-bottom:.85rem;text-transform:uppercase;font-weight:500}
+.section-badge::before{content:'//';color:var(--text4);font-size:.6rem}
+.section-title{font-family:'Press Start 2P',monospace;font-size:clamp(.7rem,1.5vw,.95rem);line-height:2;letter-spacing:.03em;color:var(--text);margin-bottom:.75rem}
+
+.btn-px{font-family:'Press Start 2P',monospace;font-size:.42rem;display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.3rem;text-decoration:none;transition:all .15s;cursor:pointer;letter-spacing:.04em}
+.btn-px-primary{background:var(--g1);color:#000;clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px);box-shadow:3px 3px 0 var(--g2)}
+.btn-px-primary:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--g2),0 0 18px var(--gglow);background:var(--g3)}
+.btn-px-secondary{background:transparent;color:var(--text);border:1px solid var(--border2);clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px)}
+.btn-px-secondary:hover{border-color:var(--g1);color:var(--g1);background:var(--gdim)}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.px-star{position:absolute;width:3px;height:3px;background:rgba(34,255,85,.55);animation:twinkle 2.5s steps(1) infinite;pointer-events:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}::-webkit-scrollbar-thumb:hover{background:var(--g2)}
+
+/* ── WF EMBED (workflow steps) ── */
+.wf-embed{display:flex;margin-top:.65rem;background:var(--card2);border:1px solid var(--border2);border-radius:0 3px 3px 0;overflow:hidden}
+.wf-embed-bar{width:3px;flex-shrink:0;background:var(--g1)}
+.wf-embed-inner{padding:.7rem .9rem .6rem;flex:1;min-width:0}
+.wf-etitle{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.55rem;line-height:1.4}
+.wf-row{display:flex;flex-direction:column;margin-bottom:.32rem}
+.wf-label{font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;color:var(--text);line-height:1.3;white-space:nowrap}
+.wf-val{font-family:'Inter',sans-serif;font-size:.72rem;color:var(--text2);line-height:1.4;word-break:break-word;padding-left:.1rem}
+.wf-green{color:rgba(34,255,85,.8);font-weight:500}
+.wf-ts{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text4);margin-top:.5rem}
+.wf-btns{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap}
+.wf-btn{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;padding:.32rem .75rem;border:none;cursor:pointer;border-radius:2px}
+.wf-btn-green{background:rgba(36,128,70,.85);color:#fff}
+.wf-btn-red{background:rgba(218,55,60,.85);color:#fff}
+.wf-approved{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.55rem;padding:.35rem .6rem;background:rgba(36,128,70,.12);border:1px solid rgba(36,128,70,.3)}
+.wf-approved-badge{font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;color:#22c55e}
+.wf-approved-by{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3)}
+.msg-embed-bar{width:3px;flex-shrink:0;background:var(--g1)}
+.msg-embed-content{padding:.75rem .9rem .65rem;flex:1}
+.msg-embed-title{font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.45rem;line-height:1.4}
+.msg-field-row{display:flex;align-items:baseline;gap:.3rem;font-size:.75rem;margin-bottom:.18rem;flex-wrap:wrap}
+.msg-fl{color:var(--text);font-weight:600;font-size:.75rem}
+.msg-fv{color:var(--text2);font-size:.75rem}
+.msg-mention{color:rgba(34,255,85,.75);font-weight:500;font-size:.75rem}
+.msg-meta{font-size:.7rem;color:var(--text3);margin-top:.5rem;font-family:'JetBrains Mono',monospace}
+.msg-btns{display:flex;gap:.4rem;padding:.5rem 0 0;flex-wrap:wrap}
+.msg-btn{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;padding:.32rem .75rem;border:none;cursor:pointer;border-radius:2px;letter-spacing:.01em}
+.msg-btn-green{background:rgba(36,128,70,.85);color:#fff}
+.msg-btn-red{background:rgba(218,55,60,.85);color:#fff}
+.msg-btn-blue{background:rgba(88,101,242,.85);color:#fff}
+</style>
+</head>
+<body>
+<canvas id="fluid-canvas"></canvas>
+<div id="pixel-layer"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html">okuname prod</a>
+  <ul class="nav-links">
+    <li><a href="index.html">← Назад</a></li>
+    <li><a href="index.html#projects">Проекты</a></li>
+    <li><a class="nav-cta" href="https://t.me/mbdezi" target="_blank">TG: @mbdezi</a></li>
+  </ul>
+  <button class="nav-mobile-btn" id="mobileBtn"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section class="proj-hero">
+  <div class="px-star" style="top:28%;left:5%;animation-delay:.6s"></div>
+  <div class="px-star" style="top:55%;right:7%;animation-delay:1.6s;width:5px;height:5px"></div>
+  <div class="proj-hero-inner">
+    <div class="proj-hero-top">
+      <a class="proj-back" href="index.html">← все проекты</a>
+      <span class="proj-num">PROJECT 02</span>
+      <span class="proj-badge-live">● DEPLOYED</span>
+    </div>
+    <h1 class="proj-title-big">SANG Bot —<br><span>Кадровый аудит</span></h1>
+    <p class="proj-hero-sub">Полноценная система кадрового аудита для игровой фракции SANG. Автоматизирует повышения, переводы, увольнения и ведёт актуальный состав без ручной работы.</p>
+    <div class="proj-hero-tags">
+      <span class="ptag">Python 3.11</span>
+      <span class="ptag">discord.py</span>
+      <span class="ptag">PostgreSQL</span>
+      <span class="ptag">Modals</span>
+      <span class="ptag">Views</span>
+      <span class="ptag">Auto-sync</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="wrap">
+    <div class="features-section">
+      <div class="section-badge">Features</div>
+      <h2 class="section-title">Возможности системы</h2>
+      <div class="features-grid">
+        <div class="feat-card reveal">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="6" y="0" width="4" height="2"/><rect x="4" y="2" width="8" height="4"/><rect x="2" y="6" width="12" height="2"/><rect x="0" y="8" width="16" height="2"/><rect x="2" y="10" width="5" height="2"/><rect x="9" y="10" width="5" height="2"/></svg>
+          </div>
+          <h3>СИСТЕМА ПОВЫШЕНИЙ</h3>
+          <p>Процедура повышения сотрудника с подтверждением старшего состава через встроенные кнопки.</p>
+          <ul>
+            <li>Выбор сотрудника и нового ранга</li>
+            <li>Подтверждение старшего состава</li>
+            <li>Автообновление роли в Discord</li>
+            <li>Запись в журнал кадровых решений</li>
+          </ul>
+        </div>
+
+        <div class="feat-card reveal" style="animation-delay:.06s">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="0" y="6" width="6" height="4"/><rect x="10" y="6" width="6" height="4"/><rect x="6" y="7" width="4" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="10" y="4" width="2" height="2"/><rect x="0" y="2" width="6" height="2"/><rect x="10" y="2" width="6" height="2"/></svg>
+          </div>
+          <h3>ПЕРЕВОДЫ ОТДЕЛОВ</h3>
+          <p>Перевод сотрудника из одного отдела в другой.</p>
+          <ul>
+            <li>Выбор нового отдела</li>
+            <li>Автоматическая смена ролей</li>
+            <li>История переводов сотрудника</li>
+          </ul>
+        </div>
+
+        <div class="feat-card reveal" style="animation-delay:.12s">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="4" y="0" width="8" height="2"/><rect x="2" y="2" width="12" height="2"/><rect x="2" y="4" width="12" height="2"/><rect x="0" y="6" width="16" height="2"/><rect x="2" y="8" width="4" height="6"/><rect x="10" y="8" width="4" height="6"/></svg>
+          </div>
+          <h3>ЗАПРОС ПОВЫШЕНИЯ</h3>
+          <p>Механизм самостоятельной подачи рапорта на повышение через модальное окно.</p>
+          <ul>
+            <li>Заполнение рапорта в модале</li>
+            <li>Статус рассмотрения заявки</li>
+            <li>Автоуведомление о решении</li>
+          </ul>
+        </div>
+
+        <div class="feat-card reveal" style="animation-delay:.18s">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="6" y="0" width="4" height="2"/><rect x="4" y="2" width="2" height="4"/><rect x="10" y="2" width="2" height="4"/><rect x="2" y="6" width="12" height="6"/><rect x="0" y="12" width="16" height="2"/><rect x="6" y="8" width="4" height="2"/></svg>
+          </div>
+          <h3>РАПОРТ НА УВОЛЬНЕНИЕ</h3>
+          <p>Оформление и рассмотрение заявки на увольнение с сохранением данных о сотруднике.</p>
+          <ul>
+            <li>Фотографии для рассмотрения рапорта(инвентарь и планшет)</li>
+            <li>Причина увольнения</li>
+            <li>Одобрение старшего состава</li>
+            <li>Снятие ролей после подтверждения</li>
+            <li>Кик с дискорд сервера</li>
+          </ul>
+        </div>
+
+        <div class="feat-card reveal" style="animation-delay:.24s">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="0" y="0" width="16" height="2"/><rect x="0" y="4" width="16" height="2"/><rect x="0" y="8" width="10" height="2"/><rect x="12" y="6" width="4" height="8"/><rect x="10" y="12" width="2" height="2"/></svg>
+          </div>
+          <h3>МОДАЛЬНЫЕ ОКНА</h3>
+          <p>Все кадровые операции выполняются через удобные Discord-модалы без сторонних форм.</p>
+          <ul>
+            <li>Нативный интерфейс Discord</li>
+            <li>Валидация полей перед отправкой</li>
+            <li>Поддержка длинных текстов</li>
+          </ul>
+        </div>
+
+        <div class="feat-card reveal" style="animation-delay:.3s">
+          <div class="feat-icon">
+            <svg viewBox="0 0 16 16"><rect x="0" y="0" width="6" height="6"/><rect x="8" y="0" width="6" height="6"/><rect x="0" y="8" width="6" height="6"/><rect x="8" y="8" width="6" height="6"/><rect x="6" y="2" width="2" height="12"/><rect x="2" y="6" width="12" height="2"/></svg>
+          </div>
+          <h3>АВТО-ОБНОВЛЕНИЕ СОСТАВА</h3>
+          <p>Состав фракции в отдельном канале обновляется автоматически каждые 30 минут.</p>
+          <ul>
+            <li>Живой ростер в канале</li>
+            <li>Разбивка по рангам</li>
+            <li>Счётчик численности</li>
+            <li>Время последнего обновления</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,#2c2c2c 20%,#2c2c2c 80%,transparent)"/>
+
+<!-- WORKFLOW -->
+<section>
+  <div class="wrap">
+    <div class="workflow-section">
+      <div class="section-badge">Workflow</div>
+      <h2 class="section-title">Кадровый процесс</h2>
+      <div class="workflow-steps">
+        <div class="wf-step reveal">
+          <div class="wf-num">1</div>
+          <div class="wf-body">
+            <h3>ИНИЦИАЦИЯ ДЕЙСТВИЯ</h3>
+            <p>Сотрудник запускает нужную команду через слэш.</p>
+            <div class="wf-demo">
+              <span class="row"><span class="dim">$</span> <span class="cmd">/uprank</span> <span class="arg">номер_паспорта:</span><span class="hi">165570</span>  <span class="arg">кого:</span><span class="hi">@p1wpaw</span> <span class="arg">ранг:</span><span class="hi">11</span> <span class="arg">причина:</span><span class="hi">Запрос одобрен</span></span>
+              <span class="row"><span class="dim">┌ Отправляется заполненая форма.</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="wf-step reveal" style="animation-delay:.08s">
+          <div class="wf-num">2</div>
+          <div class="wf-body">
+            <h3>ЗАПОЛНЕНИЕ МОДАЛА</h3>
+            <p>Discord отправляет модальное окно с заполненными полями — кто, кого, ранг, причина, доказательства и т.д.</p>
+            <div class="wf-embed">
+              <div class="wf-embed-bar"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Кадровый аудит | Повышение</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Сотрудник</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Действие</span><span class="wf-val">• Повышение на 2-й ранг</span></div>
+                <div class="wf-row"><span class="wf-label">Причина</span><span class="wf-val">• Запрос одобрен <span class="wf-green">#запрос-на-повышение</span></span></div>
+                <div class="wf-ts">05.02.2026 · 3:26</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-step reveal" style="animation-delay:.16s">
+          <div class="wf-num">3</div>
+          <div class="wf-body">
+            <h3>ПОДТВЕРЖДЕНИЕ КОМАНДИРА</h3>
+            <p>Запрос на повышение публикуется в канале командного состава. Одна кнопка — и решение принято.</p>
+            <div class="wf-embed">
+              <div class="wf-embed-bar"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Запрос на повышение</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Текущий ранг</span><span class="wf-val">• 15</span></div>
+                <div class="wf-row"><span class="wf-label">Новый ранг</span><span class="wf-val">• 16</span></div>
+                <div class="wf-row"><span class="wf-label">Ссылка на отчёт</span><span class="wf-val wf-green">link</span></div>
+                <div class="wf-ts">01.02.2026 · 20:23</div>
+              </div>
+            </div>
+            <div class="wf-btns">
+              <button class="wf-btn wf-btn-green">Одобрить</button>
+              <button class="wf-btn wf-btn-red">Отклонить</button>
+            </div>
+          </div>
+        </div>
+        <div class="wf-step reveal" style="animation-delay:.24s">
+          <div class="wf-num">4</div>
+          <div class="wf-body">
+            <h3>АВТОМАТИЧЕСКОЕ ИСПОЛНЕНИЕ</h3>
+            <p>После одобрения бот фиксирует решение, обновляет данные сотрудника и состав фракции в реальном времени.</p>
+            <div class="wf-embed">
+              <div class="wf-embed-bar"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Запрос на повышение</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Текущий ранг</span><span class="wf-val">• 15</span></div>
+                <div class="wf-row"><span class="wf-label">Новый ранг</span><span class="wf-val">• 16</span></div>
+                <div class="wf-row"><span class="wf-label">Ссылка на отчёт</span><span class="wf-val wf-green">• link</span></div>
+                <div class="wf-ts">05.02.2026 · 3:26</div>
+              </div>
+            </div>
+            <div class="wf-approved">
+              <span class="wf-approved-badge">✓ Одобрено</span>
+              <span class="wf-approved-by">Проверил'а: GL MA | Okuname Whou | 165570</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,#2c2c2c 20%,#2c2c2c 80%,transparent)"/>
+
+<!-- DEMO SHOWCASES -->
+<section>
+  <div class="wrap">
+    <div class="roster-section">
+      <div class="section-badge">Demo</div>
+      <h2 class="section-title">Как это выглядит в деле</h2>
+      <div class="showcase-grid" style="margin-top:2rem">
+
+        <!-- ПОВЫШЕНИЕ — лог -->
+        <div class="demo-card reveal">
+          <div class="demo-header">
+            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+            <span class="demo-label">Кадровый аудит — Повышение</span>
+          </div>
+          <div class="demo-body">
+            <div class="wf-embed">
+              <div class="wf-embed-bar"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Кадровый аудит | Повышение</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Сотрудник</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Действие</span><span class="wf-val">• Повышение на 2-й ранг</span></div>
+                <div class="wf-row"><span class="wf-label">Причина</span><span class="wf-val">• Запрос одобрен <span class="wf-green">#запрос-на-повышение</span></span></div>
+                <div class="wf-ts">05.02.2026 · 3:26</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- РАПОРТ НА УВОЛЬНЕНИЕ -->
+        <div class="demo-card reveal" style="animation-delay:.08s">
+          <div class="demo-header">
+            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+            <span class="demo-label">Рапорт на увольнение</span>
+          </div>
+          <div class="demo-body">
+            <div class="wf-embed">
+              <div class="wf-embed-bar" style="background:#da373c"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Рапорт на увольнение</div>
+                <div class="wf-row"><span class="wf-label">Сотрудник</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Отдел</span><span class="wf-val">• MA</span></div>
+                <div class="wf-row"><span class="wf-label">Причина</span><span class="wf-val">• По собственному желанию</span></div>
+                <div class="wf-ts">05.02.2026 · 3:30</div>
+              </div>
+            </div>
+            <div class="wf-btns">
+              <button class="wf-btn wf-btn-green">Одобрить</button>
+              <button class="wf-btn" style="background:rgba(88,101,242,.85);color:#fff">Одобрить с ЧС</button>
+              <button class="wf-btn wf-btn-red">Отклонить</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ЗАПРОС НА ПОВЫШЕНИЕ — одобрен -->
+        <div class="demo-card reveal" style="animation-delay:.14s">
+          <div class="demo-header">
+            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+            <span class="demo-label">Запрос на повышение → одобрен</span>
+          </div>
+          <div class="demo-body">
+            <div class="wf-embed">
+              <div class="wf-embed-bar"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Запрос на повышение</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Текущий ранг</span><span class="wf-val">• 13</span></div>
+                <div class="wf-row"><span class="wf-label">Новый ранг</span><span class="wf-val">• 14</span></div>
+                <div class="wf-row"><span class="wf-label">Доказательства</span><span class="wf-val">• 3 скриншота (вложения)</span></div>
+                <div class="wf-ts">01.02.2026 · 16:42</div>
+              </div>
+            </div>
+            <div class="wf-approved">
+              <span class="wf-approved-badge">✓ Одобрено</span>
+              <span class="wf-approved-by">GL MA | Okuname Whou | 165570</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ПЕРЕВОД ВО ФРАКЦИЮ -->
+        <div class="demo-card reveal" style="animation-delay:.2s">
+          <div class="demo-header">
+            <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
+            <span class="demo-label">Заявление на перевод</span>
+          </div>
+          <div class="demo-body">
+            <div class="wf-embed">
+              <div class="wf-embed-bar" style="background:#7cb8ff"></div>
+              <div class="wf-embed-inner">
+                <div class="wf-etitle">📋 Заявление на перевод</div>
+                <div class="wf-row"><span class="wf-label">Заполнил'а</span><span class="wf-val wf-green">@GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Имя Фамилия</span><span class="wf-val">• GL MA | Okuname Whou | 165570</span></div>
+                <div class="wf-row"><span class="wf-label">StaticID</span><span class="wf-val">• 165570</span></div>
+                <div class="wf-row"><span class="wf-label">Текущая фракция</span><span class="wf-val">• SANG</span></div>
+                <div class="wf-row"><span class="wf-label">Желаемая фракция</span><span class="wf-val">• FIB</span></div>
+                <div class="wf-ts">01.02.2026 · 16:42</div>
+              </div>
+            </div>
+            <div class="wf-btns">
+              <button class="wf-btn wf-btn-green">Одобрить</button>
+              <button class="wf-btn wf-btn-red">Отклонить</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="proj-cta">
+  <div class="proj-cta-text">
+    <h3>ОФИЦЕРЫ ТРАТЯТ ВРЕМЯ НА РУТИНУ?</h3>
+    <p>Напиши — разберём где можно автоматизировать и что это даст реально.</p>
+  </div>
+  <div class="proj-cta-btns">
+    <a class="btn-px btn-px-primary" href="https://t.me/mbdezi" target="_blank">Написать в Telegram</a>
+    <a class="btn-px btn-px-secondary" href="index.html">← К проектам</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 okuname — все права защищены</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const c=document.getElementById('fluid-canvas'),x=c.getContext('2d');
+  let W,H,mx=0,my=0;
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const renderScale=.68;
+  const blobs=[];
+  function resize(){
+    W=innerWidth;H=innerHeight;
+    c.style.width=W+'px';c.style.height=H+'px';
+    c.width=Math.max(1,Math.floor(W*dpr*renderScale));
+    c.height=Math.max(1,Math.floor(H*dpr*renderScale));
+    x.setTransform(dpr*renderScale,0,0,dpr*renderScale,0,0);
+  }
+  resize();addEventListener('resize',resize,{passive:true});
+  const COUNT=26;
+  for(let i=0;i<COUNT;i++){
+    const r=110+Math.random()*180;
+    blobs.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r,ph:Math.random()*Math.PI*2,sp:(Math.random()*.0012+.00055)});
+  }
+  let f=0;
+  (function draw(){
+    f++;x.clearRect(0,0,W,H);
+    x.globalCompositeOperation='screen';
+    blobs.forEach(b=>{
+      b.ph+=b.sp;b.x+=b.vx+Math.sin(b.ph*.7)*.35;b.y+=b.vy+Math.cos(b.ph*.5)*.35;
+      if(b.x<-b.r)b.x=W+b.r;if(b.x>W+b.r)b.x=-b.r;if(b.y<-b.r)b.y=H+b.r;if(b.y>H+b.r)b.y=-b.r;
+      const dx=mx-b.x,dy=my-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<400){b.x+=dx*.0004;b.y+=dy*.0004}
+      const g=x.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      g.addColorStop(0,'rgba(34,255,85,0.055)');
+      g.addColorStop(.45,'rgba(85,255,122,0.03)');
+      g.addColorStop(.75,'rgba(34,255,85,0.012)');
+      g.addColorStop(1,'rgba(34,255,85,0)');
+      x.beginPath();x.arc(b.x,b.y,b.r,0,Math.PI*2);x.fillStyle=g;x.fill();
+    });
+    if(mx||my){
+      const mg=x.createRadialGradient(mx,my,0,mx,my,140);
+      mg.addColorStop(0,'rgba(34,255,85,0.12)');
+      mg.addColorStop(.35,'rgba(85,255,122,0.055)');
+      mg.addColorStop(.6,'rgba(34,255,85,0.022)');
+      mg.addColorStop(1,'rgba(34,255,85,0)');
+      x.beginPath();x.arc(mx,my,140,0,Math.PI*2);x.fillStyle=mg;x.fill();
+    }
+    if(f%18===0){x.fillStyle='rgba(34,255,85,0.28)';x.fillRect(Math.floor(Math.random()*W/22)*22,Math.floor(Math.random()*H/22)*22,3,3)}
+    x.globalCompositeOperation='source-over';
+    requestAnimationFrame(draw);
+  })();
+  document.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY},{passive:true});
+})();
+/* (removed custom cursor) */
+
+/* ═══ GLOBAL PIXELS ═══ */
+(function(){
+  const layer=document.getElementById('pixel-layer');
+  if(!layer)return;
+  const COUNT=18;
+  const els=[];
+  function rand(min,max){return Math.random()*(max-min)+min}
+  function place(el){
+    el.style.left=rand(0,innerWidth)+'px';
+    el.style.top=rand(0,innerHeight)+'px';
+    el.style.animationDelay=rand(0,2.6).toFixed(2)+'s,'+rand(0,8).toFixed(2)+'s';
+    el.style.animationDuration=rand(2.1,3.6).toFixed(2)+'s,'+rand(7,12).toFixed(2)+'s';
+  }
+  for(let i=0;i<COUNT;i++){
+    const d=document.createElement('div');
+    d.className='bg-px'+(Math.random()>.72?' big':'');
+    place(d);
+    layer.appendChild(d);
+    els.push(d);
+  }
+  addEventListener('resize',()=>els.forEach(place),{passive:true});
+  setInterval(()=>{
+    for(let i=0;i<Math.min(6,els.length);i++)place(els[(Math.random()*els.length)|0]);
+  },2400);
+})();
+
+/* (demo left static) */
+const ro=new IntersectionObserver(e=>{e.forEach((el,i)=>{if(el.isIntersecting){setTimeout(()=>el.target.classList.add('visible'),i*60);ro.unobserve(el.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* ═══ ANALYTICS ═══ */
+(function(){
+  const KEY='oku_analytics_v1';
+  function load(){
+    try{
+      const raw=localStorage.getItem(KEY);
+      return raw?JSON.parse(raw):{visits:0,pages:{},clicks:{}};
+    }catch(e){return {visits:0,pages:{},clicks:{}}}
+  }
+  function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  const data=load();
+  data.visits=(data.visits||0)+1;
+  const page=(location.pathname.split('/').pop()||'project2.html');
+  data.pages[page]=(data.pages[page]||0)+1;
+  save(data);
+  document.addEventListener('click',e=>{
+    const t=e.target.closest && e.target.closest('a,button');
+    if(!t)return;
+    const id=t.getAttribute('data-analytics-id')||(t.textContent||'').trim().slice(0,60);
+    if(!id)return;
+    const d=load();
+    d.clicks[id]=(d.clicks[id]||0)+1;
+    save(d);
+  },{capture:true});
+})();
+</script>
+</body>
+</html>
