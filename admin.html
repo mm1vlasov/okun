@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — okuname</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#050505;color:#e5e5e5;min-height:100vh;padding:2.5rem 1.5rem}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-family:'JetBrains Mono',monospace;font-size:1.2rem;margin-bottom:1.5rem;color:#22ff55}
+.card{background:#101010;border:1px solid #222;border-radius:8px;padding:1.5rem;margin-bottom:1.5rem}
+label{display:block;font-size:.85rem;margin-bottom:.3rem;color:#bbb}
+input{width:100%;padding:.55rem .7rem;margin-bottom:.8rem;border-radius:4px;border:1px solid #333;background:#050505;color:#eee;font-family:'JetBrains Mono',monospace;font-size:.8rem}
+button{font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:.55rem 1.1rem;border-radius:4px;border:1px solid #22ff55;background:#22ff55;color:#000;cursor:pointer}
+button.secondary{background:transparent;color:#aaa;border-color:#333;margin-left:.5rem}
+table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;margin-top:.75rem}
+th,td{border:1px solid #222;padding:.4rem .55rem;text-align:left}
+th{background:#111;color:#888;font-weight:500}
+tbody tr:nth-child(even){background:#090909}
+.muted{color:#666;font-size:.8rem}
+.row{display:flex;flex-wrap:wrap;gap:1.5rem}
+.col{flex:1 1 260px}
+.field-inline{display:flex;gap:.5rem;align-items:center}
+.field-inline input{flex:1}
+.badge{display:inline-block;padding:.18rem .4rem;border-radius:999px;border:1px solid #333;font-size:.65rem;font-family:'JetBrains Mono',monospace;color:#888;margin-left:.5rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>okuname · admin</h1>
+
+  <div id="loginCard" class="card">
+    <p style="margin-bottom:.9rem;font-size:.9rem;color:#c5c5c5">Вход только для администратора.</p>
+    <label for="login">Логин</label>
+    <input id="login" autocomplete="off"/>
+    <label for="password">Пароль</label>
+    <input id="password" type="password" autocomplete="off"/>
+    <button id="loginBtn">Войти</button>
+    <span id="loginError" class="muted" style="margin-left:.75rem;color:#ff7777;display:none">Неверный логин или пароль</span>
+  </div>
+
+  <div id="adminUi" style="display:none">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+            <h2 style="font-size:1rem">Статистика</h2>
+            <span id="visitsTotal" class="badge">visits: 0</span>
+          </div>
+          <p class="muted">Данные хранятся локально в браузере (localStorage).</p>
+          <h3 style="font-size:.9rem;margin-top:1rem;margin-bottom:.3rem">Посещения по страницам</h3>
+          <table id="pagesTable">
+            <thead><tr><th>Страница</th><th>Визиты</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <h3 style="font-size:.9rem;margin-top:1rem;margin-bottom:.3rem">Клики по действиям</h3>
+          <table id="clicksTable">
+            <thead><tr><th>Элемент</th><th>Клики</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h2 style="font-size:1rem;margin-bottom:.5rem">Цены</h2>
+          <p class="muted">Эти значения переопределяют цены на главной (подписка и под ключ).</p>
+          <div style="margin-top:.8rem">
+            <h3 style="font-size:.9rem;margin-bottom:.35rem">Subscription</h3>
+            <div class="field-inline">
+              <label for="subCurrent" style="margin:0;min-width:80px">Текущая</label>
+              <input id="subCurrent" placeholder="1 275 ₽/мес"/>
+            </div>
+            <div class="field-inline">
+              <label for="subOld" style="margin:0;min-width:80px">Старая</label>
+              <input id="subOld" placeholder="1 500 ₽"/>
+            </div>
+          </div>
+          <div style="margin-top:1rem">
+            <h3 style="font-size:.9rem;margin-bottom:.35rem">Full Dev</h3>
+            <div class="field-inline">
+              <label for="fullCurrent" style="margin:0;min-width:80px">Текущая</label>
+              <input id="fullCurrent" placeholder="от 8 500 ₽"/>
+            </div>
+            <div class="field-inline">
+              <label for="fullOld" style="margin:0;min-width:80px">Старая</label>
+              <input id="fullOld" placeholder="от 10 000 ₽"/>
+            </div>
+          </div>
+          <div style="margin-top:1.1rem">
+            <button id="savePrices">Сохранить цены</button>
+            <button id="resetPrices" class="secondary">Сбросить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HASH_HEX = 'c6c2b5de1c7648920c522a9273e1f550b1c78bdef5e7d3b5f5c9529ed1e6f9e4'; // sha256('screampage:harsMother03-')
+const ANALYTICS_KEY = 'oku_analytics_v1';
+const PRICING_KEY = 'oku_pricing_v1';
+
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function loadAnalytics(){
+  try{
+    const raw = localStorage.getItem(ANALYTICS_KEY);
+    return raw ? JSON.parse(raw) : {visits:0,pages:{},clicks:{}};
+  }catch(e){
+    return {visits:0,pages:{},clicks:{}};
+  }
+}
+
+function loadPrices(){
+  try{
+    const raw = localStorage.getItem(PRICING_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){return {}}
+}
+
+function savePrices(p){localStorage.setItem(PRICING_KEY,JSON.stringify(p));}
+
+document.getElementById('loginBtn').addEventListener('click',async()=>{
+  const login = document.getElementById('login').value.trim();
+  const pass = document.getElementById('password').value;
+  const err = document.getElementById('loginError');
+  err.style.display='none';
+  const h = await sha256Hex(login+':'+pass);
+  if(h!==HASH_HEX){
+    err.style.display='inline';
+    return;
+  }
+  document.getElementById('loginCard').style.display='none';
+  document.getElementById('adminUi').style.display='block';
+  renderAnalytics();
+  initPricingForm();
+});
+
+function renderAnalytics(){
+  const data = loadAnalytics();
+  document.getElementById('visitsTotal').textContent = 'visits: '+(data.visits||0);
+  const pagesTbody = document.querySelector('#pagesTable tbody');
+  pagesTbody.innerHTML='';
+  Object.entries(data.pages||{}).sort((a,b)=>b[1]-a[1]).forEach(([page,count])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+page+'</td><td>'+count+'</td>';
+    pagesTbody.appendChild(tr);
+  });
+  const clicksTbody = document.querySelector('#clicksTable tbody');
+  clicksTbody.innerHTML='';
+  Object.entries(data.clicks||{}).sort((a,b)=>b[1]-a[1]).slice(0,40).forEach(([id,count])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+id.replace(/</g,'&lt;')+'</td><td>'+count+'</td>';
+    clicksTbody.appendChild(tr);
+  });
+}
+
+function initPricingForm(){
+  const p = loadPrices();
+  document.getElementById('subCurrent').value = p.subscription?.current || '';
+  document.getElementById('subOld').value = p.subscription?.old || '';
+  document.getElementById('fullCurrent').value = p.full?.current || '';
+  document.getElementById('fullOld').value = p.full?.old || '';
+}
+
+document.getElementById('savePrices').addEventListener('click',()=>{
+  const p = {
+    subscription:{
+      current:document.getElementById('subCurrent').value.trim(),
+      old:document.getElementById('subOld').value.trim()
+    },
+    full:{
+      current:document.getElementById('fullCurrent').value.trim(),
+      old:document.getElementById('fullOld').value.trim()
+    }
+  };
+  savePrices(p);
+  alert('Цены сохранены. Обнови главную страницу, чтобы увидеть изменения.');
+});
+
+document.getElementById('resetPrices').addEventListener('click',()=>{
+  localStorage.removeItem(PRICING_KEY);
+  initPricingForm();
+});
+</script>
+</body>
+</html>
+
