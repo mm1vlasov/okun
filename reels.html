@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Монтаж Reels — okuname</title>
+<meta name="description" content="Монтаж вертикальных роликов, подкастов, видео с motion-графикой. От 1 500 ₽. Портфолио: @okunameprod. @okuname"/>
+<meta name="author" content="okuname"/>
+<link rel="icon" type="image/x-icon" href="icon.ico"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060606;--bg2:#0a0a0a;--card:#101010;--card2:#161616;
+  --border:#1e1e1e;--border2:#2c2c2c;
+  --g1:#ff7a18;--g2:#ff5500;--g3:#ffb347;
+  --gdim:rgba(255,122,24,0.06);--gglow:rgba(255,122,24,0.25);
+  --text:#ebebeb;--text2:#888;--text3:#555;--text4:#2e2e2e;
+  --nav-h:68px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Chakra Petch',sans-serif;overflow-x:hidden;line-height:1.6}
+#fluid-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#pixel-layer{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.bg-px{position:absolute;width:3px;height:3px;background:rgba(255,122,24,.55);opacity:.75;animation:twinkle 2.6s steps(1) infinite,pxfloat 8s linear infinite;transform:translate3d(0,0,0)}
+.bg-px.big{width:5px;height:5px;opacity:.7}
+@keyframes pxfloat{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(0,-18px,0)}}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.01) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);background-size:22px 22px;z-index:1;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.09) 2px,rgba(0,0,0,.09) 3px);z-index:2;pointer-events:none}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes logoFlicker{0%,95%,100%{opacity:1}96%{opacity:.55}97.5%{opacity:1}98.8%{opacity:.35}}
+@keyframes twinkle{0%,75%,100%{opacity:.7}80%{opacity:0}90%{opacity:.3}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 6px rgba(255,122,24,.6)}50%{text-shadow:0 0 14px var(--g1),0 0 28px var(--gglow)}}
+@keyframes bulletPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.25);opacity:1;text-shadow:0 0 8px rgba(255,122,24,.6)}}
+@keyframes discountPulse{0%,100%{box-shadow:0 0 0 rgba(0,0,0,0);filter:brightness(1)}50%{box-shadow:0 0 14px var(--g1),0 0 28px var(--gglow);filter:brightness(1.25)}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.2rem,5vw,4rem);height:var(--nav-h);background:rgba(6,6,6,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2)}
+.nav-logo{font-family:'Press Start 2P',monospace;font-size:.72rem;color:var(--g1);text-decoration:none;letter-spacing:.05em;animation:logoFlicker 5s infinite;text-shadow:0 0 10px rgba(255,122,24,.5);flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:.15rem;list-style:none}
+.nav-links a{font-family:'Press Start 2P',monospace;font-size:.38rem;font-weight:400;color:var(--text3);text-decoration:none;padding:.5rem .9rem;letter-spacing:.04em;position:relative;transition:color .2s;background:none;border-radius:0;white-space:nowrap}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--g1);transition:width .25s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px var(--g1)}
+.nav-links a:hover{color:var(--g1);background:none}
+.nav-links a:hover::after{width:100%}
+.nav-cta{font-family:'Press Start 2P',monospace !important;font-size:.4rem !important;color:#000 !important;background:var(--g1) !important;padding:.52rem 1.05rem !important;letter-spacing:.04em;transition:all .15s !important;cursor:pointer;clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px);border-radius:0 !important;white-space:nowrap}
+.nav-cta:hover{background:var(--g3) !important;box-shadow:0 0 14px var(--gglow) !important;color:#000 !important}
+.nav-mobile-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:10}
+.nav-mobile-btn span{display:block;width:22px;height:2px;background:var(--text2);transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(6,6,6,.98);border-bottom:1px solid var(--border2);z-index:499;padding:1.5rem clamp(1.2rem,5vw,4rem);flex-direction:column;gap:0}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Chakra Petch',sans-serif;font-size:.95rem;font-weight:500;color:var(--text2);text-decoration:none;padding:.75rem 0;border-bottom:1px solid var(--border);transition:color .15s}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover{color:var(--g1)}
+@media(max-width:820px){.nav-links{display:none}.nav-mobile-btn{display:flex}}
+
+/* UTIL */
+.section-wrap{max-width:1280px;margin:0 auto;padding:5.5rem clamp(1.2rem,5vw,4rem);width:100%}
+section{position:relative;z-index:10}
+.section-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--g1);letter-spacing:.1em;margin-bottom:.85rem;text-transform:uppercase;font-weight:500}
+.section-badge::before{content:'//';color:var(--text4);font-size:.6rem}
+.section-title{font-family:'Press Start 2P',monospace;font-size:clamp(.72rem,1.6vw,1rem);line-height:2;letter-spacing:.03em;color:var(--text);margin-bottom:.75rem}
+.section-sub{font-family:'Chakra Petch',sans-serif;font-size:.95rem;color:var(--text2);margin-bottom:3rem;max-width:560px;line-height:1.75}
+.px-divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border2) 20%,var(--border2) 80%,transparent);margin:0}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.px-star{position:absolute;width:3px;height:3px;background:rgba(255,122,24,.55);animation:twinkle 2.5s steps(1) infinite;pointer-events:none;z-index:5}
+
+/* STATUS */
+.status-bar{display:inline-flex;align-items:center;gap:.55rem;background:var(--gdim);border:1px solid rgba(255,122,24,.22);padding:.38rem .85rem;font-family:'Chakra Petch',sans-serif;font-size:.78rem;font-weight:500;color:var(--g1);letter-spacing:.04em}
+.status-dot{width:7px;height:7px;background:var(--g1);animation:blink 1.2s steps(1) infinite;flex-shrink:0;box-shadow:0 0 6px var(--g1)}
+
+/* HERO */
+.page-hero{padding:calc(var(--nav-h) + 5rem) clamp(1.2rem,5vw,4rem) 4rem;max-width:1280px;margin:0 auto}
+.page-hero>*{animation:fadeUp .6s ease both}
+.page-hero>*:nth-child(1){animation-delay:.1s}
+.page-hero>*:nth-child(2){animation-delay:.22s}
+.page-hero>*:nth-child(3){animation-delay:.34s}
+.page-hero>*:nth-child(4){animation-delay:.46s}
+.page-hero h1{font-family:'Press Start 2P',monospace;font-size:clamp(.78rem,2vw,1.32rem);line-height:2.3;letter-spacing:.03em;margin-bottom:1.25rem;color:var(--text)}
+.page-hero h1 .accent{color:var(--g1);animation:glowPulse 3s ease-in-out infinite}
+
+/* CARDS */
+.px-card{background:rgba(14,14,14,.85);border:1px solid var(--border2);padding:1.75rem;position:relative;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s,border-color .22s;cursor:default;overflow:hidden;backdrop-filter:blur(4px)}
+.px-card::before{content:'';position:absolute;top:-3px;left:-3px;width:6px;height:6px;background:var(--g1);opacity:.5}
+.px-card::after{content:'';position:absolute;bottom:-3px;right:-3px;width:6px;height:6px;background:var(--g1);opacity:.5}
+.px-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 30px rgba(255,122,24,.08);border-color:rgba(255,122,24,.3)}
+.px-card:hover::before,.px-card:hover::after{opacity:1;box-shadow:0 0 8px var(--g1)}
+.px-card.featured{border-color:rgba(255,122,24,.18)}
+.glow-track .glow-follow{position:absolute;width:260px;height:260px;background:radial-gradient(circle,rgba(255,122,24,.09) 0%,transparent 70%);border-radius:50%;pointer-events:none;opacity:0;transition:opacity .3s;transform:translate(-50%,-50%)}
+.glow-track:hover .glow-follow{opacity:1}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--g1);background:var(--gdim);border:1px solid rgba(255,122,24,.18);padding:.22rem .55rem;display:inline-block;margin-bottom:.9rem}
+.px-card h3{font-family:'Press Start 2P',monospace;font-size:.68rem;line-height:2;color:var(--text);margin-bottom:.75rem;letter-spacing:.03em}
+.card-desc{font-family:'Chakra Petch',sans-serif;font-size:.9rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.7}
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.5rem}
+.feature-list li{font-family:'Chakra Petch',sans-serif;font-size:.88rem;color:var(--text2);display:flex;align-items:flex-start;gap:.55rem;line-height:1.5}
+.feature-list li::before{content:'▸';color:var(--g1);flex-shrink:0;font-size:.7rem;margin-top:.18em;animation:bulletPulse 2.5s ease-in-out infinite}
+
+/* BUTTONS */
+.btn-px{font-family:'Press Start 2P',monospace;font-size:.42rem;display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.3rem;text-decoration:none;transition:all .15s;cursor:pointer;letter-spacing:.04em}
+.btn-px-primary{background:var(--g1);color:#000;clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px);box-shadow:3px 3px 0 var(--g2)}
+.btn-px-primary:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--g2),0 0 18px var(--gglow);background:var(--g3)}
+.btn-px-secondary{background:transparent;color:var(--text);border:1px solid var(--border2);clip-path:polygon(3px 0,calc(100% - 3px) 0,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0 calc(100% - 3px),0 3px)}
+.btn-px-secondary:hover{border-color:var(--g1);color:var(--g1);background:var(--gdim)}
+.btn-px-ghost{background:transparent;color:var(--g1);border:1px solid rgba(255,122,24,.3);font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.5rem 1rem;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+.btn-px-ghost:hover{background:var(--gdim);border-color:var(--g1);box-shadow:0 0 12px rgba(255,122,24,.15)}
+
+/* PRICE DISPLAY */
+.price-display{font-family:'Press Start 2P',monospace;font-size:.95rem;color:var(--g1);line-height:1;text-shadow:0 0 14px rgba(255,122,24,.35)}
+.price-note{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3);margin-top:.35rem;margin-bottom:1.25rem}
+.price-old{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text4);text-decoration:line-through;display:none}
+.discount-badge{display:inline-flex;align-items:center;height:22px;padding:0 .55rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.06em;color:var(--g1);background:rgba(255,122,24,.15);border:1px solid rgba(255,122,24,.35);animation:discountPulse 1.6s ease-in-out infinite}
+.revisions-badge{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text3);border:1px solid var(--border2);padding:.18rem .5rem;display:inline-block;margin-bottom:.75rem}
+
+/* SERVICES GRID */
+.services-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
+@media(max-width:900px){.services-grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.services-grid-3{grid-template-columns:1fr}}
+
+/* PACKAGE SECTION */
+.packages-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
+@media(max-width:700px){.packages-grid{grid-template-columns:1fr}}
+.pack-card{background:var(--card);border:1px solid var(--border2);padding:1.75rem;position:relative;overflow:hidden;transition:all .2s}
+.pack-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g1),transparent)}
+.pack-card.best{border-color:rgba(255,122,24,.3);background:rgba(255,122,24,.03)}
+.pack-badge{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:#000;background:var(--g1);padding:.18rem .55rem;display:inline-block;margin-bottom:.75rem;text-transform:uppercase}
+.pack-card h3{font-family:'Press Start 2P',monospace;font-size:.75rem;color:var(--text);margin-bottom:.4rem;line-height:1.8}
+.pack-qty{font-family:'Chakra Petch',sans-serif;font-size:.85rem;color:var(--text3);margin-bottom:1rem}
+.pack-price{font-family:'Press Start 2P',monospace;font-size:1.1rem;color:var(--g1);margin-bottom:.25rem;text-shadow:0 0 14px rgba(255,122,24,.3)}
+.pack-per{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text4)}
+
+/* VIDEO GRID */
+.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:700px){.video-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.video-grid{grid-template-columns:1fr}}
+.video-placeholder{background:var(--card);border:1px solid var(--border2);aspect-ratio:9/16;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;cursor:pointer;transition:all .2s}
+.video-placeholder:hover{border-color:rgba(255,122,24,.35);background:rgba(255,122,24,.02)}
+.video-placeholder video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7;transition:opacity .2s}
+.video-placeholder:hover video{opacity:1}
+.video-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;background:rgba(0,0,0,.35);transition:background .2s}
+.video-placeholder:hover .video-overlay{background:rgba(0,0,0,.15)}
+.play-icon{width:44px;height:44px;background:rgba(255,122,24,.18);border:1px solid rgba(255,122,24,.4);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.video-placeholder:hover .play-icon{background:rgba(255,122,24,.35);box-shadow:0 0 18px rgba(255,122,24,.3)}
+.play-icon svg{fill:var(--g1);width:18px;height:18px;margin-left:3px}
+.video-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text2);letter-spacing:.06em}
+.video-num{font-family:'Press Start 2P',monospace;font-size:.38rem;color:var(--text4)}
+
+/* ADV MOSAIC */
+.adv-mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+@media(max-width:700px){.adv-mosaic{grid-template-columns:1fr 1fr}}
+.adv-card{background:var(--bg2);padding:1.75rem;position:relative;overflow:hidden}
+.adv-card h3{font-family:'Press Start 2P',monospace;font-size:.52rem;line-height:2;color:var(--text);margin-bottom:.6rem;letter-spacing:.04em}
+.adv-card p{font-family:'Chakra Petch',sans-serif;font-size:.85rem;color:var(--text3);line-height:1.6}
+.adv-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,122,24,.3),transparent)}
+.adv-icon{width:32px;height:32px;margin-bottom:.9rem}
+.adv-icon svg{width:28px;height:28px;fill:var(--g1);opacity:.7}
+
+/* WHAT'S INCLUDED */
+.included-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:660px){.included-grid{grid-template-columns:1fr}}
+.incl-block{background:var(--card);border:1px solid var(--border2);padding:1.5rem;position:relative}
+.incl-block::before{content:'';position:absolute;top:-3px;left:-3px;width:5px;height:5px;background:var(--g1);opacity:.6}
+.incl-title{font-family:'Press Start 2P',monospace;font-size:.52rem;color:var(--text);line-height:2;margin-bottom:.75rem;letter-spacing:.04em}
+.incl-list{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.incl-list li{font-family:'Chakra Petch',sans-serif;font-size:.85rem;color:var(--text2);display:flex;align-items:flex-start;gap:.4rem}
+.incl-list li::before{content:'✓';color:var(--g1);flex-shrink:0;font-size:.75rem}
+
+/* FOOTER */
+footer{background:rgba(6,6,6,.85);border-top:1px solid var(--border);padding:3.5rem clamp(1.2rem,5vw,4rem);position:relative;z-index:10;backdrop-filter:blur(8px)}
+.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;align-items:start}
+@media(max-width:800px){.footer-inner{grid-template-columns:1fr 1fr;gap:2rem}}
+@media(max-width:480px){.footer-inner{grid-template-columns:1fr;gap:1.5rem}}
+.footer-brand{min-width:0}
+.footer-logo{font-family:'Press Start 2P',monospace;font-size:.65rem;color:var(--g1);text-decoration:none;display:block;margin-bottom:.75rem;line-height:1.8}
+.footer-desc{font-family:'Chakra Petch',sans-serif;font-size:.82rem;color:var(--text3);line-height:1.65;max-width:280px}
+.footer-col h4{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text4);margin-bottom:.9rem;font-weight:500}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;padding:0}
+.footer-col a{font-family:'Chakra Petch',sans-serif;font-size:.85rem;color:var(--text2);text-decoration:none;transition:color .15s}
+.footer-col a:hover{color:var(--g1)}
+.footer-bottom{max-width:1280px;margin:2rem auto 0;padding-top:1.25rem;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
+.footer-bottom-right{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.footer-bottom a{color:var(--text3);text-decoration:none;transition:color .15s}
+.footer-bottom a:hover{color:var(--g1)}
+.footer-sep{color:var(--text4)}
+
+@media(max-width:600px){
+  .section-wrap{padding:3.5rem clamp(1rem,4vw,1.5rem)}
+  .page-hero h1{font-size:.72rem}
+}
+
+/* COOKIE BANNER */
+#okuCookieBanner{position:fixed;bottom:0;left:0;right:0;z-index:800;background:rgba(10,10,10,.97);border-top:1px solid rgba(255,122,24,.25);padding:1.2rem clamp(1.2rem,5vw,4rem);display:none;align-items:center;flex-wrap:wrap;gap:1rem;backdrop-filter:blur(12px)}
+#okuCookieBanner.show{display:flex}
+.ocu-ck-text{font-family:'Chakra Petch',sans-serif;font-size:.85rem;color:var(--text2);flex:1;line-height:1.6;min-width:220px}
+.ocu-ck-text a{color:var(--g1);text-decoration:none}
+.ocu-ck-btns{display:flex;gap:.65rem;flex-shrink:0;flex-wrap:wrap}
+.ocu-ck-btn{font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:.45rem 1rem;border:none;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.ocu-ck-accept{background:var(--g1);color:#000}
+.ocu-ck-accept:hover{background:var(--g3)}
+.ocu-ck-decline{background:transparent;color:var(--text3);border:1px solid var(--border2)}
+.ocu-ck-decline:hover{border-color:var(--text2);color:var(--text2)}
+</style>
+</head>
+<body>
+
+
+<!-- COOKIE BANNER -->
+<div id="okuCookieBanner">
+  <div class="ocu-ck-text">
+    Сайт использует cookie и localStorage для аналитики. Продолжая использование, вы даёте согласие.
+    <a href="privacy.html#cookies">Подробнее</a>
+  </div>
+  <div class="ocu-ck-btns">
+    <button class="ocu-ck-btn ocu-ck-accept" id="okuCkAccept">Принять</button>
+    <button class="ocu-ck-btn ocu-ck-decline" id="okuCkDecline">Отклонить</button>
+  </div>
+</div>
+
+<canvas id="fluid-canvas"></canvas>
+<div id="pixel-layer"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">okuname</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Главная</a></li>
+    <li><a href="#portfolio">Портфолио</a></li>
+    <li><a href="#services">Цены</a></li>
+    <li><a href="#packages">Пакеты</a></li>
+    <li><a href="#included">Что входит</a></li>
+    <li><a href="#advantages">Преимущества</a></li>
+    <li><a class="nav-cta" href="https://t.me/mbdezi" target="_blank">TG: @mbdezi</a></li>
+  </ul>
+  <button class="nav-mobile-btn" id="mobileBtn"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobile()">Главная</a>
+  <a href="#portfolio" onclick="closeMobile()">Портфолио</a>
+  <a href="#services" onclick="closeMobile()">Цены</a>
+  <a href="#packages" onclick="closeMobile()">Пакеты</a>
+  <a href="#included" onclick="closeMobile()">Что входит</a>
+  <a href="#advantages" onclick="closeMobile()">Преимущества</a>
+  <a href="https://t.me/mbdezi" target="_blank">Telegram — @mbdezi</a>
+</div>
+
+<!-- HERO -->
+<section id="top" style="position:relative;z-index:10">
+  <div class="px-star" style="top:22%;left:5%;animation-delay:.4s"></div>
+  <div class="px-star" style="top:38%;right:8%;animation-delay:1.4s;width:5px;height:5px"></div>
+  <div class="page-hero">
+    <div class="status-bar" style="margin-bottom:1.2rem"><div class="status-dot"></div>Принимаю заказы на монтаж</div>
+    <h1>Монтаж Reels<br>и коротких роликов.</h1>
+    <p style="font-family:'Chakra Petch',sans-serif;font-size:.97rem;color:var(--text2);margin-bottom:2rem;line-height:1.75;max-width:560px">Вертикальные ролики, подкасты, видео с motion-графикой. Субтитры, динамика, ритм — не просто нарезка, а готовый контент для роста.</p>
+    <div style="display:flex;gap:.85rem;flex-wrap:wrap;align-items:center">
+      <a class="btn-px btn-px-primary" href="https://t.me/mbdezi" target="_blank">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
+        Обсудить заказ
+      </a>
+      <a class="btn-px btn-px-secondary" href="https://t.me/okunameprod" target="_blank">Полное портфолио →</a>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- PORTFOLIO EXAMPLES -->
+<section id="portfolio">
+  <div class="section-wrap">
+    <div class="section-badge">Portfolio</div>
+    <h2 class="section-title">Примеры работ</h2>
+    <p class="section-sub">Несколько примеров из портфолио. Полный архив — в Telegram-канале.</p>
+
+    <div class="video-grid" style="margin-bottom:1.5rem">
+      <!-- Video 1 -->
+      <div class="video-placeholder" onclick="toggleVideo(this)">
+        <video src="video1.mp4" loop playsinline preload="metadata"></video>
+        <div class="video-overlay">
+          <div class="play-icon">
+            <svg viewBox="0 0 16 16"><polygon points="3,1 13,8 3,15"/></svg>
+          </div>
+          <div class="video-label">ПРИМЕР 01</div>
+          <div class="video-num">// reel</div>
+        </div>
+      </div>
+      <!-- Video 2 -->
+      <div class="video-placeholder" onclick="toggleVideo(this)">
+        <video src="video2.mp4" loop playsinline preload="metadata"></video>
+        <div class="video-overlay">
+          <div class="play-icon">
+            <svg viewBox="0 0 16 16"><polygon points="3,1 13,8 3,15"/></svg>
+          </div>
+          <div class="video-label">ПРИМЕР 02</div>
+          <div class="video-num">// reel</div>
+        </div>
+      </div>
+      <!-- Video 3 -->
+      <div class="video-placeholder" onclick="toggleVideo(this)">
+        <video src="video3.mp4" loop playsinline preload="metadata"></video>
+        <div class="video-overlay">
+          <div class="play-icon">
+            <svg viewBox="0 0 16 16"><polygon points="3,1 13,8 3,15"/></svg>
+          </div>
+          <div class="video-label">ПРИМЕР 03</div>
+          <div class="video-num">// reel</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center">
+      <a class="btn-px-ghost" href="https://t.me/okunameprod" target="_blank">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
+        Смотреть всё портфолио — @okunameprod
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-wrap">
+    <div class="section-badge">Pricing</div>
+    <h2 class="section-title">Форматы и стоимость</h2>
+    <p class="section-sub">Три формата под разные задачи. Каждый заказ обсуждается — но вот базовые ориентиры.</p>
+
+    <div class="services-grid-3">
+      <!-- REEL -->
+      <div class="px-card featured glow-track reveal">
+        <div class="glow-follow"></div>
+        <span class="card-tag">Reels / Shorts</span>
+        <div class="revisions-badge">1 правка</div>
+        <h3>Вертикальный ролик</h3>
+        <p class="card-desc">До 1 минуты. Всё для результата: динамичная нарезка, правильный ритм, кадрирование под вертикаль, выравнивание звука.</p>
+        <ul class="feature-list">
+          <li>Субтитры с синхронизацией</li>
+          <li>Динамичный монтаж под ритм</li>
+          <li>Кадрирование 9:16</li>
+          <li>Работа со звуком и музыкой</li>
+          <li>Цветокоррекция базовая</li>
+        </ul>
+        <div style="margin-bottom:.75rem"><span class="discount-badge" id="reelsShortDiscountBadge" style="display:none">−15% сейчас</span></div>
+        <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:.25rem">
+          <div class="price-display" id="reelsShortCurrentPrice">от 1 500 ₽</div>
+          <div class="price-old" id="reelsShortOldPrice"></div>
+        </div>
+        <div class="price-note" id="reelsShortNote">за ролик до 1 минуты</div>
+        <a class="btn-px btn-px-primary" href="https://t.me/mbdezi" target="_blank">Заказать</a>
+      </div>
+
+      <!-- MOTION -->
+      <div class="px-card glow-track reveal">
+        <div class="glow-follow"></div>
+        <span class="card-tag">Motion</span>
+        <div class="revisions-badge">2 правки</div>
+        <h3>С motion-графикой</h3>
+        <p class="card-desc">Не каждое видео подходит под этот формат — обсудим материал. Анимированные подписи, переходы, эффекты, слои.</p>
+        <ul class="feature-list">
+          <li>Анимированные нижние трети и подписи</li>
+          <li>Кастомные переходы и эффекты</li>
+          <li>Анимация текста и графических элементов</li>
+          <li>Интеграция брендинга</li>
+          <li>Расширенная работа со звуком</li>
+        </ul>
+        <div style="margin-bottom:.75rem"><span class="discount-badge" id="reelsMotionDiscountBadge" style="display:none">−15% сейчас</span></div>
+        <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:.25rem">
+          <div class="price-display" id="reelsMotionCurrentPrice">от 2 500 ₽</div>
+          <div class="price-old" id="reelsMotionOldPrice"></div>
+        </div>
+        <div class="price-note" id="reelsMotionNote">за ролик с motion-графикой</div>
+        <a class="btn-px btn-px-secondary" href="https://t.me/mbdezi" target="_blank">Заказать</a>
+      </div>
+
+      <!-- PODCAST -->
+      <div class="px-card glow-track reveal">
+        <div class="glow-follow"></div>
+        <span class="card-tag">Podcast</span>
+        <div class="revisions-badge">3 правки</div>
+        <h3>Подкаст</h3>
+        <p class="card-desc">До 1 часа, до 3 камер. Полная пост-продакшн обработка: нарезка пауз, улучшение голоса, смена планов, титры, экспорт.</p>
+        <ul class="feature-list">
+          <li>Синхронизация до 3 камер</li>
+          <li>Нарезка пауз и лишнего</li>
+          <li>Базовая цветокоррекция</li>
+          <li>Улучшение качества звука</li>
+          <li>Динамическая смена планов</li>
+          <li>Экспорт в нужном формате</li>
+        </ul>
+        <div style="margin-bottom:.75rem"><span class="discount-badge" id="reelsPodDiscountBadge" style="display:none">−15% сейчас</span></div>
+        <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:.25rem">
+          <div class="price-display" id="reelsPodCurrentPrice">от 5 500 ₽</div>
+          <div class="price-old" id="reelsPodOldPrice"></div>
+        </div>
+        <div class="price-note" id="reelsPodNote">за подкаст до 1 часа</div>
+        <a class="btn-px btn-px-secondary" href="https://t.me/mbdezi" target="_blank">Заказать</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="section-wrap">
+    <div class="section-badge">Pack deals</div>
+    <h2 class="section-title">Пакетные предложения</h2>
+    <p class="section-sub">Регулярный контент — дешевле. Если нужно несколько роликов сразу, выгоднее взять пакет.</p>
+
+    <div class="packages-grid">
+      <div class="pack-card reveal">
+        <div class="pack-badge">Старт</div>
+        <div class="pack-card h3" style="font-family:'Press Start 2P',monospace;font-size:.7rem;color:var(--text);margin-bottom:.4rem;line-height:1.8">10 роликов</div>
+        <div class="pack-qty">Вертикальные ролики до 1 минуты</div>
+        <div class="pack-price">12 000 ₽</div>
+        <div class="pack-per">// 1 200 ₽ за ролик</div>
+        <div style="margin-top:1.25rem">
+          <a class="btn-px-ghost" href="https://t.me/mbdezi" target="_blank" style="font-size:.6rem">Заказать пакет</a>
+        </div>
+      </div>
+      <div class="pack-card best reveal">
+        <div class="pack-badge">Популярный</div>
+        <div class="pack-card h3" style="font-family:'Press Start 2P',monospace;font-size:.7rem;color:var(--text);margin-bottom:.4rem;line-height:1.8">15 роликов</div>
+        <div class="pack-qty">Вертикальные ролики до 1 минуты</div>
+        <div class="pack-price">18 000 ₽</div>
+        <div class="pack-per">// 1 200 ₽ за ролик</div>
+        <div style="margin-top:1.25rem">
+          <a class="btn-px-ghost" href="https://t.me/mbdezi" target="_blank" style="font-size:.6rem">Заказать пакет</a>
+        </div>
+      </div>
+      <div class="pack-card reveal">
+        <div class="pack-badge">Макс</div>
+        <div class="pack-card h3" style="font-family:'Press Start 2P',monospace;font-size:.7rem;color:var(--text);margin-bottom:.4rem;line-height:1.8">20 роликов</div>
+        <div class="pack-qty">Вертикальные ролики до 1 минуты</div>
+        <div class="pack-price">25 000 ₽</div>
+        <div class="pack-per">// 1 250 ₽ за ролик</div>
+        <div style="margin-top:1.25rem">
+          <a class="btn-px-ghost" href="https://t.me/mbdezi" target="_blank" style="font-size:.6rem">Заказать пакет</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- WHAT'S INCLUDED -->
+<section id="included">
+  <div class="section-wrap">
+    <div class="section-badge">Workflow</div>
+    <h2 class="section-title">Что входит в работу</h2>
+    <p class="section-sub">Всё, что нужно для готового контента — без доплат за базовые вещи.</p>
+    <div class="included-grid">
+      <div class="incl-block reveal">
+        <div class="incl-title">Монтаж и ритм</div>
+        <ul class="incl-list">
+          <li>Нарезка по ритму и логике</li>
+          <li>Динамические переходы</li>
+          <li>Темп под платформу (Reels, TikTok, Shorts)</li>
+          <li>Удаление пауз и слов-паразитов</li>
+        </ul>
+      </div>
+      <div class="incl-block reveal">
+        <div class="incl-title">Звук</div>
+        <ul class="incl-list">
+          <li>Выравнивание уровней громкости</li>
+          <li>Шумоподавление</li>
+          <li>Подбор и синхронизация музыки</li>
+        </ul>
+      </div>
+      <div class="incl-block reveal">
+        <div class="incl-title">Визуал</div>
+        <ul class="incl-list">
+          <li>Базовая цветокоррекция</li>
+          <li>Кадрирование под вертикаль / горизонталь</li>
+          <li>Стабилизация при необходимости</li>
+          <li>Подбор обложки для превью</li>
+        </ul>
+      </div>
+      <div class="incl-block reveal">
+        <div class="incl-title">Текст и подписи</div>
+        <ul class="incl-list">
+          <li>Субтитры с синхронизацией по таймкоду</li>
+          <li>Анимированные субтитры</li>
+          <li>Стилизация под брендинг</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- ADVANTAGES -->
+<section id="advantages">
+  <div class="section-wrap">
+    <div class="section-badge">Why me</div>
+    <h2 class="section-title">Почему стоит выбрать</h2>
+    <div class="adv-mosaic">
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="8"/><rect x="0" y="10" width="16" height="2"/><rect x="6" y="12" width="4" height="4"/></svg></div>
+        <h3>ЧУВСТВУЮ РИТМ</h3>
+        <p>Монтаж — не просто нарезать куски. Это темп, акценты, дыхание видео. Делаю так, чтобы не хотелось листать дальше.</p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="0" y="6" width="4" height="4"/><rect x="6" y="2" width="4" height="12"/><rect x="12" y="4" width="4" height="8"/></svg></div>
+        <h3>ПОД ПЛАТФОРМУ</h3>
+        <p>Reels, TikTok, YouTube Shorts — у каждого свои алгоритмы и привычки аудитории. Монтирую с учётом площадки.</p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="4" y="0" width="8" height="2"/><rect x="2" y="2" width="12" height="2"/><rect x="0" y="4" width="16" height="2"/><rect x="4" y="8" width="8" height="2"/><rect x="6" y="10" width="4" height="6"/></svg></div>
+        <h3>БЫСТРАЯ ОТДАЧА</h3>
+        <p>Ролик до 1 минуты — готов в 1–2 рабочих дня. Не надо ждать неделю, пока очередь дойдёт.</p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="6" y="0" width="4" height="6"/><rect x="4" y="6" width="8" height="2"/><rect x="0" y="10" width="16" height="2"/><rect x="2" y="12" width="4" height="4"/><rect x="10" y="12" width="4" height="4"/></svg></div>
+        <h3>ЧЕСТНО О ФОРМАТЕ</h3>
+        <p>Motion-графика подходит не каждому контенту — скажу об этом честно, не буду навязывать лишнего.</p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="8" y="0" width="6" height="2"/><rect x="8" y="4" width="6" height="2"/><rect x="8" y="8" width="6" height="2"/><rect x="2" y="0" width="4" height="2"/><rect x="2" y="4" width="4" height="2"/><rect x="2" y="8" width="4" height="2"/><rect x="0" y="12" width="16" height="4"/></svg></div>
+        <h3>ПРАВКИ БЕЗ СКАНДАЛА</h3>
+        <p>Количество правок оговорено заранее. Если замечания по делу — исправлю быстро и без лишних вопросов.</p>
+      </div>
+      <div class="adv-card reveal">
+        <div class="adv-icon"><svg viewBox="0 0 16 16"><rect x="0" y="0" width="6" height="6"/><rect x="10" y="0" width="6" height="6"/><rect x="0" y="10" width="6" height="6"/><rect x="10" y="10" width="6" height="6"/></svg></div>
+        <h3>ПАКЕТЫ ВЫГОДНЫ</h3>
+        <p>Если нужен регулярный контент — пакет из 10, 15 или 20 роликов обходится заметно дешевле поштучного заказа.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="px-divider"/>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-wrap">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center">
+      <div>
+        <div class="section-badge">Let's edit</div>
+        <h2 class="section-title">Готов к работе.</h2>
+        <p class="section-sub" style="margin-bottom:1.5rem">Напиши в Telegram — расскажи что за материал, сколько роликов и когда нужно. Отвечу в тот же день.</p>
+        <div style="display:flex;gap:.85rem;flex-wrap:wrap">
+          <a class="btn-px btn-px-primary" href="https://t.me/mbdezi" target="_blank">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
+            Написать в Telegram
+          </a>
+          <a class="btn-px btn-px-ghost" href="https://t.me/okunameprod" target="_blank">Портфолио →</a>
+          <a class="btn-px btn-px-secondary" href="index.html">← Главная</a>
+        </div>
+      </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="footer-logo" href="index.html">okuname</a>
+      <p class="footer-desc">Video Editor. Монтаж Reels — быстро, красиво, на большие охваты.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Навигация</h4>
+      <ul>
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#projects">Проекты</a></li>
+        <li><a href="#advantages">Преимущества</a></li>
+        <li><a href="#process">Процесс</a></li>
+        <li><a href="websites.html">Создание сайтов</a></li>
+        <li><a href="reels.html">Монтаж Reels</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Правовые</h4>
+      <ul>
+        <li><a href="privacy.html?tab=privacy">Политика конфиденциальности</a></li>
+        <li><a href="privacy.html?tab=terms">Пользовательское соглашение</a></li>
+        <li><a href="privacy.html?tab=cookies">Политика Cookie</a></li>
+        <li><a href="privacy.html?tab=prices">Условия и цены</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 okuname — все права защищены</span>
+    <span class="footer-bottom-right">
+      <a href="privacy.html?tab=privacy">Политика конфиденциальности</a>
+      <span class="footer-sep">·</span>
+      <span>⚠ Цены ознакомительные — не оферта (ст. 437 ГК РФ)</span>
+    </span>
+  </div>
+</footer>
+
+<script>
+/* MOBILE MENU */
+const mb=document.getElementById('mobileBtn'),mm=document.getElementById('mobileMenu');
+mb.addEventListener('click',()=>{mm.classList.toggle('open');mb.classList.toggle('open')});
+function closeMobile(){mm.classList.remove('open');mb.classList.remove('open')}
+
+/* VIDEO TOGGLE */
+function toggleVideo(wrap){
+  const video=wrap.querySelector('video');
+  if(!video)return;
+  if(video.paused){
+    // pause all others
+    document.querySelectorAll('.video-placeholder video').forEach(v=>{if(v!==video){v.pause();v.closest('.video-placeholder').querySelector('.video-overlay').style.opacity='1'}});
+    video.play();
+    wrap.querySelector('.video-overlay').style.opacity='0';
+  } else {
+    video.pause();
+    wrap.querySelector('.video-overlay').style.opacity='1';
+  }
+}
+
+/* REVEAL */
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* GLOW TRACK */
+document.querySelectorAll('.glow-track').forEach(card=>{
+  const g=card.querySelector('.glow-follow');if(!g)return;
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();g.style.left=(e.clientX-r.left)+'px';g.style.top=(e.clientY-r.top)+'px'});
+});
+
+/* PIXEL LAYER */
+(function(){
+  const layer=document.getElementById('pixel-layer');
+  for(let i=0;i<22;i++){const p=document.createElement('div');p.className='bg-px'+(Math.random()>.7?' big':'');p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';p.style.animationDelay=Math.random()*3+'s,'+(Math.random()*6)+'s';layer.appendChild(p)}
+})();
+
+/* CANVAS */
+(function(){const c=document.getElementById('fluid-canvas'),x=c.getContext('2d');let W,H,mx=0,my=0;const dpr=Math.min(devicePixelRatio||1,2),rs=.68;const blobs=[];function resize(){W=innerWidth;H=innerHeight;c.style.width=W+'px';c.style.height=H+'px';c.width=Math.max(1,Math.floor(W*dpr*rs));c.height=Math.max(1,Math.floor(H*dpr*rs));x.setTransform(dpr*rs,0,0,dpr*rs,0,0)}resize();addEventListener('resize',resize,{passive:true});for(let i=0;i<28;i++){const r=110+Math.random()*180;blobs.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r,ph:Math.random()*Math.PI*2,sp:(Math.random()*.0012+.00055)})}let f=0;(function draw(){f++;x.clearRect(0,0,W,H);x.globalCompositeOperation='screen';blobs.forEach(b=>{b.ph+=b.sp;b.x+=b.vx+Math.sin(b.ph*.7)*.4;b.y+=b.vy+Math.cos(b.ph*.5)*.4;if(b.x<-b.r)b.x=W+b.r;if(b.x>W+b.r)b.x=-b.r;if(b.y<-b.r)b.y=H+b.r;if(b.y>H+b.r)b.y=-b.r;const dx=mx-b.x,dy=my-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<500){b.x+=dx*.0004;b.y+=dy*.0004}const g=x.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);g.addColorStop(0,'rgba(255,122,24,0.055)');g.addColorStop(.45,'rgba(255,179,71,0.03)');g.addColorStop(.75,'rgba(255,122,24,0.012)');g.addColorStop(1,'rgba(255,122,24,0)');x.beginPath();x.arc(b.x,b.y,b.r,0,Math.PI*2);x.fillStyle=g;x.fill()});if(mx||my){const mg=x.createRadialGradient(mx,my,0,mx,my,160);mg.addColorStop(0,'rgba(255,122,24,0.12)');mg.addColorStop(.35,'rgba(255,179,71,0.055)');mg.addColorStop(.6,'rgba(255,122,24,0.022)');mg.addColorStop(1,'rgba(255,122,24,0)');x.beginPath();x.arc(mx,my,160,0,Math.PI*2);x.fillStyle=mg;x.fill()}if(f%16===0){x.fillStyle='rgba(255,122,24,0.3)';x.fillRect(Math.floor(Math.random()*W/22)*22,Math.floor(Math.random()*H/22)*22,3,3)}x.globalCompositeOperation='source-over';requestAnimationFrame(draw);})();document.addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY},{passive:true});})();
+
+/* ADMIN PRICING OVERRIDES — reels.html */
+(function(){
+  const KEY='oku_reels_pricing_v1';
+  let raw;try{raw=localStorage.getItem(KEY)}catch(e){return}
+  if(!raw)return;
+  let cfg;try{cfg=JSON.parse(raw)}catch(e){return}
+  const show=cfg.showDiscount===true;
+  const badgeText=cfg.badgeGlobal||'';
+  const setFormat=(prefix,data)=>{
+    if(!data)return;
+    const cur=document.getElementById(prefix+'CurrentPrice');
+    const old=document.getElementById(prefix+'OldPrice');
+    const note=document.getElementById(prefix+'Note');
+    const badge=document.getElementById(prefix+'DiscountBadge');
+    if(cur&&data.current)cur.textContent=data.current;
+    if(note&&data.note)note.textContent=data.note;
+    if(old){
+      if(data.old)old.textContent=data.old;
+      old.style.display=(show&&data.old)?'inline-block':'none';
+    }
+    if(badge){
+      // If badge text is not provided in admin, keep the default text from HTML.
+      if(badgeText)badge.textContent=badgeText;
+      badge.style.display=show ? 'inline-flex' : 'none';
+    }
+  };
+  setFormat('reelsShort',cfg.short);
+  setFormat('reelsMotion',cfg.motion);
+  setFormat('reelsPod',cfg.podcast);
+})();
+
+/* ADMIN CONTENT OVERRIDES — reels.html */
+(function(){
+  const KEY='oku_content_v1';
+  let raw;try{raw=localStorage.getItem(KEY)}catch(e){return}
+  if(!raw)return;
+  let cfg;try{cfg=JSON.parse(raw)}catch(e){return}
+  if(cfg.statusReels){
+    const dot=document.querySelector('.hero .status-dot');
+    const bar=document.querySelector('.hero .status-bar');
+    if(dot){dot.style.background=cfg.statusReels.enabled?'var(--g1)':'#ff4d4d';dot.style.boxShadow=cfg.statusReels.enabled?'0 0 6px var(--g1)':'0 0 6px #ff4d4d'}
+    if(bar&&cfg.statusReels.text){const txt=bar.childNodes[bar.childNodes.length-1];if(txt&&txt.nodeType===3)txt.textContent=cfg.statusReels.text}
+  }
+  if(cfg.banner?.enabled&&cfg.banner?.text){
+    const b=document.createElement('div');
+    const existing=document.getElementById('okuBanner');
+    if(existing)existing.remove();
+    b.id='okuBanner';
+    const colors={info:'rgba(77,159,255,.12)',green:'rgba(255,122,24,.12)',warn:'rgba(255,210,77,.12)'};
+    const borders={info:'rgba(77,159,255,.3)',green:'rgba(255,122,24,.28)',warn:'rgba(255,210,77,.3)'};
+    const txtColors={info:'#4d9fff',green:'var(--g1)',warn:'#ffd24d'};
+    const t=cfg.banner.type||'info';
+    b.style.cssText=`position:fixed;top:var(--nav-h);left:0;right:0;z-index:450;padding:.55rem 1.5rem;background:${colors[t]||colors.info};border-bottom:1px solid ${borders[t]||borders.info};font-family:'JetBrains Mono',monospace;font-size:.68rem;color:${txtColors[t]||txtColors.info};text-align:center;letter-spacing:.04em`;
+    b.textContent=cfg.banner.text;
+    document.body.insertBefore(b,document.body.firstChild);
+  }
+})();
+
+/* ANALYTICS */
+(function(){
+  const KEY='oku_analytics_v1';
+  function load(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):{visits:0,pages:{},clicks:{}}}catch(e){return{visits:0,pages:{},clicks:{}}}}
+  function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  const data=load();data.visits=(data.visits||0)+1;
+  const page=(location.pathname.split('/').pop()||'index.html');
+  data.pages[page]=(data.pages[page]||0)+1;save(data);
+  document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('a,button');if(!t)return;const id=t.getAttribute('data-analytics-id')||(t.textContent||'').trim().slice(0,60);if(!id)return;const d=load();d.clicks[id]=(d.clicks[id]||0)+1;save(d)},{capture:true});
+})();
+
+/* COOKIE CONSENT BANNER */
+(function(){
+  var KEY='oku_cookie_consent';
+  var banner=document.getElementById('okuCookieBanner');
+  if(!banner)return;
+  var consent;try{consent=localStorage.getItem(KEY)}catch(e){}
+  if(!consent)banner.classList.add('show');
+  document.getElementById('okuCkAccept').addEventListener('click',function(){
+    try{localStorage.setItem(KEY,'accepted')}catch(e){}
+    banner.classList.remove('show');
+  });
+  document.getElementById('okuCkDecline').addEventListener('click',function(){
+    try{localStorage.setItem(KEY,'declined')}catch(e){}
+    banner.classList.remove('show');
+  });
+})();
+
+</script>
+</body>
+</html>
