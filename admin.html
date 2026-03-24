@@ -14,13 +14,13 @@
 :root{
   --bg:#050505;--bg2:#0a0a0a;--card:#0f0f0f;--card2:#141414;
   --border:#1e1e1e;--border2:#2a2a2a;
-  --g1:#22ff55;--g2:#18cc44;--gglow:rgba(34,255,85,0.22);
+  --g1:#ff7a18;--g2:#ff5500;--gglow:rgba(255,122,24,0.22);
   --text:#e8e8e8;--text2:#888;--text3:#444;
   --red:#ff4d4d;--yellow:#ffd24d;--blue:#4d9fff;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(34,255,85,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(34,255,85,.012) 1px,transparent 1px);background-size:28px 28px;z-index:0;pointer-events:none}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,122,24,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,122,24,.012) 1px,transparent 1px);background-size:28px 28px;z-index:0;pointer-events:none}
 .login-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:var(--bg)}
 .login-box{width:100%;max-width:380px;padding:0 1.5rem;animation:fadeUp .5s ease both}
 .login-logo{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--g1);margin-bottom:2.5rem;letter-spacing:.05em;text-shadow:0 0 16px var(--gglow)}
@@ -29,9 +29,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .field{margin-bottom:1rem}
 .field label{display:block;font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--text3);margin-bottom:.4rem;letter-spacing:.06em;text-transform:uppercase}
 .field input{width:100%;padding:.65rem .8rem;background:var(--card);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;transition:border-color .15s,box-shadow .15s}
-.field input:focus{border-color:rgba(34,255,85,.4);box-shadow:0 0 0 3px rgba(34,255,85,.06)}
+.field input:focus{border-color:rgba(255,122,24,.4);box-shadow:0 0 0 3px rgba(255,122,24,.06)}
 .login-btn{width:100%;margin-top:1.5rem;padding:.7rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;background:var(--g1);color:#000;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,box-shadow .15s}
-.login-btn:hover{background:#55ff7a;box-shadow:0 0 20px var(--gglow)}
+.login-btn:hover{background:#ffb347;box-shadow:0 0 20px var(--gglow)}
 .login-error{margin-top:.9rem;font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--red);display:none;padding:.5rem .7rem;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2)}
 .login-shake{animation:shake .35s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
@@ -79,7 +79,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .form-field{margin-bottom:1rem}
 .form-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem}
 .form-field input,.form-field textarea,.form-field select{width:100%;padding:.55rem .7rem;background:var(--bg2);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;transition:border-color .15s;resize:vertical}
-.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:rgba(34,255,85,.35);box-shadow:0 0 0 3px rgba(34,255,85,.05)}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:rgba(255,122,24,.35);box-shadow:0 0 0 3px rgba(255,122,24,.05)}
 .form-hint{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3);margin-top:.3rem;line-height:1.5}
 .form-row{display:flex;gap:.75rem;align-items:flex-end}
 .form-row .form-field{flex:1;margin-bottom:0}
@@ -87,21 +87,21 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-slider{position:absolute;inset:0;cursor:pointer;background:var(--border2);transition:background .2s}
 .toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text3);transition:transform .2s,background .2s}
-.toggle input:checked + .toggle-slider{background:rgba(34,255,85,.2);border:1px solid rgba(34,255,85,.4)}
+.toggle input:checked + .toggle-slider{background:rgba(255,122,24,.2);border:1px solid rgba(255,122,24,.4)}
 .toggle input:checked + .toggle-slider::before{transform:translateX(20px);background:var(--g1);box-shadow:0 0 8px var(--gglow)}
 .btn{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;padding:.55rem 1.1rem;border:none;cursor:pointer;letter-spacing:.04em;transition:all .15s;display:inline-flex;align-items:center;gap:.45rem}
 .btn-primary{background:var(--g1);color:#000}
-.btn-primary:hover{background:#55ff7a;box-shadow:0 0 16px var(--gglow)}
+.btn-primary:hover{background:#ffb347;box-shadow:0 0 16px var(--gglow)}
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
 .btn-ghost:hover{color:var(--text);border-color:var(--text3)}
 .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,77,77,.25)}
 .btn-danger:hover{background:rgba(255,77,77,.08);border-color:rgba(255,77,77,.5)}
 .btn-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.25rem}
 .badge{display:inline-flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:.2rem .5rem;border:1px solid;letter-spacing:.04em}
-.badge-green{color:var(--g1);border-color:rgba(34,255,85,.3);background:rgba(34,255,85,.06)}
+.badge-green{color:var(--g1);border-color:rgba(255,122,24,.3);background:rgba(255,122,24,.06)}
 #toast{position:fixed;bottom:2rem;right:2rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;align-items:flex-end}
 .toast-item{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.6rem 1rem;border:1px solid;animation:toastIn .25s ease both;display:flex;align-items:center;gap:.5rem;max-width:320px}
-.toast-item.success{background:rgba(34,255,85,.08);border-color:rgba(34,255,85,.3);color:var(--g1)}
+.toast-item.success{background:rgba(255,122,24,.08);border-color:rgba(255,122,24,.3);color:var(--g1)}
 .toast-item.error{background:rgba(255,77,77,.08);border-color:rgba(255,77,77,.3);color:var(--red)}
 .toast-item.info{background:rgba(77,159,255,.08);border-color:rgba(77,159,255,.3);color:var(--blue)}
 .toast-out{animation:toastOut .2s ease forwards}
@@ -164,7 +164,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="main">
     <div class="tabs">
       <button class="tab active" data-tab="analytics">Аналитика</button>
-      <button class="tab" data-tab="prices">Цены и скидки</button>
+      <button class="tab" data-tab="prices">Цены — Боты</button>
+      <button class="tab" data-tab="web-prices">Цены — Сайты</button>
+      <button class="tab" data-tab="reels-prices">Цены — Reels</button>
       <button class="tab" data-tab="content">Контент</button>
       <button class="tab" data-tab="settings">Настройки</button>
     </div>
@@ -276,6 +278,95 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
     </div>
 
+    <!-- WEB PRICES -->
+    <div class="tab-panel" id="tab-web-prices">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">
+        Управляй ценами на странице <strong style="color:var(--text2)">websites.html</strong>. После сохранения — обнови страницу сайтов (F5).
+      </p>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Лендинг — одностраничный сайт</div>
+          <div class="form-field"><label>Цена (текущая)</label><input id="webLandCurrent" placeholder="от 10 000 ₽"/></div>
+          <div class="form-field"><label>Цена (старая / зачёркнутая)</label><input id="webLandOld" placeholder="от 12 000 ₽"/></div>
+          <div class="form-field"><label>Примечание</label><input id="webLandNote" placeholder="фиксированная цена под задачу"/></div>
+          <div class="form-row" style="margin-top:.75rem"><label style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.06em;text-transform:uppercase">Показывать скидку</label><label class="toggle" style="margin-bottom:0;margin-left:auto"><input type="checkbox" id="webLandShowDiscount"/><span class="toggle-slider"></span></label></div>
+          <div class="form-field" style="margin-top:.75rem"><label>Текст бейджа скидки</label><input id="webLandBadge" placeholder="−15% сейчас"/></div>
+          <div class="discount-preview" id="dpWebLand">
+            <div class="discount-preview-title">Превью</div>
+            <div class="dp-row"><span class="dp-current" id="dpWebLandCurrent">от 10 000 ₽</span><span class="dp-old" id="dpWebLandOld"></span><span class="dp-badge" id="dpWebLandBadge" style="display:none">−15%</span></div>
+            <div class="dp-note" id="dpWebLandNote">фиксированная цена под задачу</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Многостраничный сайт</div>
+          <div class="form-field"><label>Цена (текущая)</label><input id="webMultiCurrent" placeholder="от 25 000 ₽"/></div>
+          <div class="form-field"><label>Цена (старая / зачёркнутая)</label><input id="webMultiOld" placeholder="от 30 000 ₽"/></div>
+          <div class="form-field"><label>Примечание</label><input id="webMultiNote" placeholder="каждый проект обсуждается индивидуально"/></div>
+          <div class="form-row" style="margin-top:.75rem"><label style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.06em;text-transform:uppercase">Показывать скидку</label><label class="toggle" style="margin-bottom:0;margin-left:auto"><input type="checkbox" id="webMultiShowDiscount"/><span class="toggle-slider"></span></label></div>
+          <div class="form-field" style="margin-top:.75rem"><label>Текст бейджа скидки</label><input id="webMultiBadge" placeholder="−15% сейчас"/></div>
+          <div class="discount-preview">
+            <div class="discount-preview-title">Превью</div>
+            <div class="dp-row"><span class="dp-current" id="dpWebMultiCurrent">от 25 000 ₽</span><span class="dp-old" id="dpWebMultiOld"></span><span class="dp-badge" id="dpWebMultiBadge" style="display:none">−15%</span></div>
+            <div class="dp-note" id="dpWebMultiNote">каждый проект обсуждается индивидуально</div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="saveWebPricesBtn">💾 Сохранить цены сайтов</button>
+        <button class="btn btn-ghost" id="previewWebBtn">↗ Открыть websites.html</button>
+        <button class="btn btn-danger" id="resetWebPricesBtn">Сбросить</button>
+      </div>
+    </div>
+
+    <!-- REELS PRICES -->
+    <div class="tab-panel" id="tab-reels-prices">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">
+        Управляй ценами на странице <strong style="color:var(--text2)">reels.html</strong>. После сохранения — обнови страницу (F5).
+      </p>
+      <div class="grid3">
+        <div class="card">
+          <div class="card-title">Ролик до 1 минуты</div>
+          <div class="form-field"><label>Цена текущая</label><input id="reelsShortCurrent" placeholder="от 1 500 ₽"/></div>
+          <div class="form-field"><label>Цена старая</label><input id="reelsShortOld" placeholder=""/></div>
+          <div class="form-field"><label>Примечание</label><input id="reelsShortNote" placeholder="1 видео, до 60 сек"/></div>
+          <div class="discount-preview" style="margin-top:.75rem">
+            <div class="discount-preview-title">Превью</div>
+            <div class="dp-row"><span class="dp-current" id="dpReelsShortCurrent">от 1 500 ₽</span><span class="dp-old" id="dpReelsShortOld"></span></div>
+            <div class="dp-note" id="dpReelsShortNote">1 видео, до 60 сек</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">С motion-графикой</div>
+          <div class="form-field"><label>Цена текущая</label><input id="reelsMotionCurrent" placeholder="от 2 500 ₽"/></div>
+          <div class="form-field"><label>Цена старая</label><input id="reelsMotionOld" placeholder=""/></div>
+          <div class="form-field"><label>Примечание</label><input id="reelsMotionNote" placeholder="анимированная графика, эффекты"/></div>
+          <div class="discount-preview" style="margin-top:.75rem">
+            <div class="discount-preview-title">Превью</div>
+            <div class="dp-row"><span class="dp-current" id="dpReelsMotionCurrent">от 2 500 ₽</span><span class="dp-old" id="dpReelsMotionOld"></span></div>
+            <div class="dp-note" id="dpReelsMotionNote">анимированная графика, эффекты</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Подкаст до 1 часа</div>
+          <div class="form-field"><label>Цена текущая</label><input id="reelsPodCurrent" placeholder="от 5 500 ₽"/></div>
+          <div class="form-field"><label>Цена старая</label><input id="reelsPodOld" placeholder=""/></div>
+          <div class="form-field"><label>Примечание</label><input id="reelsPodNote" placeholder="монтаж, саб, чистка звука"/></div>
+          <div class="discount-preview" style="margin-top:.75rem">
+            <div class="discount-preview-title">Превью</div>
+            <div class="dp-row"><span class="dp-current" id="dpReelsPodCurrent">от 5 500 ₽</span><span class="dp-old" id="dpReelsPodOld"></span></div>
+            <div class="dp-note" id="dpReelsPodNote">монтаж, саб, чистка звука</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-field" style="margin-top:1.25rem"><label>Глобальный бейдж скидки (для всех форматов)</label><input id="reelsBadgeGlobal" placeholder="−15% сейчас"/></div>
+      <div class="form-row" style="margin-bottom:1.25rem"><label style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3)">Показывать бейдж скидки</label><label class="toggle" style="margin-bottom:0;margin-left:auto"><input type="checkbox" id="reelsShowDiscount"/><span class="toggle-slider"></span></label></div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="saveReelsPricesBtn">💾 Сохранить цены Reels</button>
+        <button class="btn btn-ghost" id="previewReelsBtn">↗ Открыть reels.html</button>
+        <button class="btn btn-danger" id="resetReelsPricesBtn">Сбросить</button>
+      </div>
+    </div>
+
     <!-- CONTENT -->
     <div class="tab-panel" id="tab-content">
       <div class="card" style="margin-bottom:1.25rem">
@@ -298,14 +389,36 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
       <div class="card">
         <div class="card-title">
-          Статус «Доступен для проектов»
+          Статус — Главная (Discord-боты)
           <span class="card-title-right">
             <label class="toggle" style="margin-bottom:0"><input type="checkbox" id="statusEnabled" checked/><span class="toggle-slider"></span></label>
           </span>
         </div>
-        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1rem">Управляет индикатором в hero-секции. Если выключен — точка становится красной.</p>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1rem">Управляет индикатором в hero-секции index.html. Если выключен — точка становится красной.</p>
         <div class="form-field"><label>Текст статуса</label><input id="statusText" placeholder="ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ"/></div>
         <div class="btn-group"><button class="btn btn-primary" id="saveStatusBtn">Сохранить</button></div>
+      </div>
+      <div class="card" style="margin-top:1.25rem">
+        <div class="card-title">
+          Статус — Страница сайтов
+          <span class="card-title-right">
+            <label class="toggle" style="margin-bottom:0"><input type="checkbox" id="statusWebEnabled" checked/><span class="toggle-slider"></span></label>
+          </span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1rem">Управляет индикатором «Принимаю заказы» в hero websites.html.</p>
+        <div class="form-field"><label>Текст статуса</label><input id="statusWebText" placeholder="Принимаю заказы на разработку"/></div>
+        <div class="btn-group"><button class="btn btn-primary" id="saveStatusWebBtn">Сохранить</button></div>
+      </div>
+      <div class="card" style="margin-top:1.25rem">
+        <div class="card-title">
+          Статус — Страница Reels
+          <span class="card-title-right">
+            <label class="toggle" style="margin-bottom:0"><input type="checkbox" id="statusReelsEnabled" checked/><span class="toggle-slider"></span></label>
+          </span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:1rem">Управляет индикатором «Принимаю заявки» в hero reels.html.</p>
+        <div class="form-field"><label>Текст статуса</label><input id="statusReelsText" placeholder="Принимаю заявки на монтаж"/></div>
+        <div class="btn-group"><button class="btn btn-primary" id="saveStatusReelsBtn">Сохранить</button></div>
       </div>
     </div>
 
@@ -552,12 +665,143 @@ document.getElementById('savePassBtn').addEventListener('click',async()=>{
 });
 document.getElementById('clearAllBtn').addEventListener('click',()=>{
   showConfirm('Очистить все данные?','Аналитика, цены и контент будут удалены. Данные входа сохранятся.',()=>{
-    [ANALYTICS_KEY,PRICING_KEY,CONTENT_KEY].forEach(k=>localStorage.removeItem(k));
-    renderAnalytics();initPricingForm();initContentForm();toast('Все данные очищены','info');
+    [ANALYTICS_KEY,PRICING_KEY,CONTENT_KEY,WEB_PRICING_KEY,REELS_PRICING_KEY].forEach(k=>localStorage.removeItem(k));
+    renderAnalytics();initPricingForm();initWebPricingForm();initReelsPricingForm();initContentForm();initContentFormExtra();toast('Все данные очищены','info');
   });
 });
 
-function initApp(){updateClock();renderAnalytics();initPricingForm();initContentForm()}
+function initApp(){updateClock();renderAnalytics();initPricingForm();initWebPricingForm();initReelsPricingForm();initContentForm();initContentFormExtra()}
+
+
+// WEB PRICING
+const WEB_PRICING_KEY='oku_web_pricing_v1';
+const REELS_PRICING_KEY='oku_reels_pricing_v1';
+
+function updateWebDiscountPreview(){
+  document.getElementById('dpWebLandCurrent').textContent=document.getElementById('webLandCurrent').value||'от 10 000 ₽';
+  const lo=document.getElementById('dpWebLandOld');if(lo)lo.textContent=document.getElementById('webLandOld').value||'';
+  document.getElementById('dpWebLandNote').textContent=document.getElementById('webLandNote').value||'фиксированная цена под задачу';
+  const lb=document.getElementById('dpWebLandBadge');if(lb){lb.textContent=document.getElementById('webLandBadge').value||'−15%';lb.style.display=document.getElementById('webLandShowDiscount').checked&&document.getElementById('webLandBadge').value?'':'none'}
+  document.getElementById('dpWebMultiCurrent').textContent=document.getElementById('webMultiCurrent').value||'от 25 000 ₽';
+  const mo=document.getElementById('dpWebMultiOld');if(mo)mo.textContent=document.getElementById('webMultiOld').value||'';
+  document.getElementById('dpWebMultiNote').textContent=document.getElementById('webMultiNote').value||'каждый проект обсуждается индивидуально';
+  const mb2=document.getElementById('dpWebMultiBadge');if(mb2){mb2.textContent=document.getElementById('webMultiBadge').value||'−15%';mb2.style.display=document.getElementById('webMultiShowDiscount').checked&&document.getElementById('webMultiBadge').value?'':'none'}
+}
+['webLandCurrent','webLandOld','webLandNote','webLandBadge','webMultiCurrent','webMultiOld','webMultiNote','webMultiBadge'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.addEventListener('input',updateWebDiscountPreview);
+});
+['webLandShowDiscount','webMultiShowDiscount'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.addEventListener('change',updateWebDiscountPreview);
+});
+
+function loadWebPrices(){return ls(WEB_PRICING_KEY)||{}}
+function initWebPricingForm(){
+  const p=loadWebPrices();
+  document.getElementById('webLandCurrent').value=p.landing?.current||'';
+  document.getElementById('webLandOld').value=p.landing?.old||'';
+  document.getElementById('webLandNote').value=p.landing?.note||'';
+  document.getElementById('webLandBadge').value=p.landing?.badge||'';
+  document.getElementById('webLandShowDiscount').checked=p.landing?.showDiscount||false;
+  document.getElementById('webMultiCurrent').value=p.multi?.current||'';
+  document.getElementById('webMultiOld').value=p.multi?.old||'';
+  document.getElementById('webMultiNote').value=p.multi?.note||'';
+  document.getElementById('webMultiBadge').value=p.multi?.badge||'';
+  document.getElementById('webMultiShowDiscount').checked=p.multi?.showDiscount||false;
+  updateWebDiscountPreview();
+}
+
+const saveWebBtn=document.getElementById('saveWebPricesBtn');
+if(saveWebBtn)saveWebBtn.addEventListener('click',()=>{
+  lsSave(WEB_PRICING_KEY,{
+    landing:{current:document.getElementById('webLandCurrent').value.trim(),old:document.getElementById('webLandOld').value.trim(),note:document.getElementById('webLandNote').value.trim(),badge:document.getElementById('webLandBadge').value.trim(),showDiscount:document.getElementById('webLandShowDiscount').checked},
+    multi:{current:document.getElementById('webMultiCurrent').value.trim(),old:document.getElementById('webMultiOld').value.trim(),note:document.getElementById('webMultiNote').value.trim(),badge:document.getElementById('webMultiBadge').value.trim(),showDiscount:document.getElementById('webMultiShowDiscount').checked}
+  });
+  toast('Цены сайтов сохранены — обнови websites.html (F5)');
+});
+const previewWebBtn=document.getElementById('previewWebBtn');
+if(previewWebBtn)previewWebBtn.addEventListener('click',()=>window.open('websites.html','_blank'));
+const resetWebBtn=document.getElementById('resetWebPricesBtn');
+if(resetWebBtn)resetWebBtn.addEventListener('click',()=>{
+  showConfirm('Сбросить цены сайтов?','Цены вернутся к значениям по умолчанию.',()=>{
+    localStorage.removeItem(WEB_PRICING_KEY);initWebPricingForm();toast('Цены сайтов сброшены','info');
+  });
+});
+
+// REELS PRICING
+function updateReelsPreview(){
+  document.getElementById('dpReelsShortCurrent').textContent=document.getElementById('reelsShortCurrent').value||'от 1 500 ₽';
+  const o1=document.getElementById('dpReelsShortOld');if(o1)o1.textContent=document.getElementById('reelsShortOld').value||'';
+  document.getElementById('dpReelsShortNote').textContent=document.getElementById('reelsShortNote').value||'1 видео, до 60 сек';
+  document.getElementById('dpReelsMotionCurrent').textContent=document.getElementById('reelsMotionCurrent').value||'от 2 500 ₽';
+  const o2=document.getElementById('dpReelsMotionOld');if(o2)o2.textContent=document.getElementById('reelsMotionOld').value||'';
+  document.getElementById('dpReelsMotionNote').textContent=document.getElementById('reelsMotionNote').value||'анимированная графика, эффекты';
+  document.getElementById('dpReelsPodCurrent').textContent=document.getElementById('reelsPodCurrent').value||'от 5 500 ₽';
+  const o3=document.getElementById('dpReelsPodOld');if(o3)o3.textContent=document.getElementById('reelsPodOld').value||'';
+  document.getElementById('dpReelsPodNote').textContent=document.getElementById('reelsPodNote').value||'монтаж, саб, чистка звука';
+}
+['reelsShortCurrent','reelsShortOld','reelsShortNote','reelsMotionCurrent','reelsMotionOld','reelsMotionNote','reelsPodCurrent','reelsPodOld','reelsPodNote','reelsBadgeGlobal'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.addEventListener('input',updateReelsPreview);
+});
+
+function loadReelsPrices(){return ls(REELS_PRICING_KEY)||{}}
+function initReelsPricingForm(){
+  const p=loadReelsPrices();
+  document.getElementById('reelsShortCurrent').value=p.short?.current||'';
+  document.getElementById('reelsShortOld').value=p.short?.old||'';
+  document.getElementById('reelsShortNote').value=p.short?.note||'';
+  document.getElementById('reelsMotionCurrent').value=p.motion?.current||'';
+  document.getElementById('reelsMotionOld').value=p.motion?.old||'';
+  document.getElementById('reelsMotionNote').value=p.motion?.note||'';
+  document.getElementById('reelsPodCurrent').value=p.podcast?.current||'';
+  document.getElementById('reelsPodOld').value=p.podcast?.old||'';
+  document.getElementById('reelsPodNote').value=p.podcast?.note||'';
+  document.getElementById('reelsBadgeGlobal').value=p.badgeGlobal||'';
+  document.getElementById('reelsShowDiscount').checked=p.showDiscount||false;
+  updateReelsPreview();
+}
+
+const saveReelsBtn=document.getElementById('saveReelsPricesBtn');
+if(saveReelsBtn)saveReelsBtn.addEventListener('click',()=>{
+  lsSave(REELS_PRICING_KEY,{
+    short:{current:document.getElementById('reelsShortCurrent').value.trim(),old:document.getElementById('reelsShortOld').value.trim(),note:document.getElementById('reelsShortNote').value.trim()},
+    motion:{current:document.getElementById('reelsMotionCurrent').value.trim(),old:document.getElementById('reelsMotionOld').value.trim(),note:document.getElementById('reelsMotionNote').value.trim()},
+    podcast:{current:document.getElementById('reelsPodCurrent').value.trim(),old:document.getElementById('reelsPodOld').value.trim(),note:document.getElementById('reelsPodNote').value.trim()},
+    badgeGlobal:document.getElementById('reelsBadgeGlobal').value.trim(),
+    showDiscount:document.getElementById('reelsShowDiscount').checked
+  });
+  toast('Цены Reels сохранены — обнови reels.html (F5)');
+});
+const previewReelsBtn=document.getElementById('previewReelsBtn');
+if(previewReelsBtn)previewReelsBtn.addEventListener('click',()=>window.open('reels.html','_blank'));
+const resetReelsBtn=document.getElementById('resetReelsPricesBtn');
+if(resetReelsBtn)resetReelsBtn.addEventListener('click',()=>{
+  showConfirm('Сбросить цены Reels?','Цены вернутся к значениям по умолчанию.',()=>{
+    localStorage.removeItem(REELS_PRICING_KEY);initReelsPricingForm();toast('Цены Reels сброшены','info');
+  });
+});
+
+// STATUS - websites & reels
+const saveStatusWebBtn=document.getElementById('saveStatusWebBtn');
+if(saveStatusWebBtn)saveStatusWebBtn.addEventListener('click',()=>{
+  const c=loadContent();
+  c.statusWeb={enabled:document.getElementById('statusWebEnabled').checked,text:document.getElementById('statusWebText').value.trim()};
+  lsSave(CONTENT_KEY,c);toast('Статус сайтов сохранён — обнови websites.html (F5)');
+});
+const saveStatusReelsBtn=document.getElementById('saveStatusReelsBtn');
+if(saveStatusReelsBtn)saveStatusReelsBtn.addEventListener('click',()=>{
+  const c=loadContent();
+  c.statusReels={enabled:document.getElementById('statusReelsEnabled').checked,text:document.getElementById('statusReelsText').value.trim()};
+  lsSave(CONTENT_KEY,c);toast('Статус Reels сохранён — обнови reels.html (F5)');
+});
+
+function initContentFormExtra(){
+  const c=loadContent();
+  const swe=document.getElementById('statusWebEnabled');if(swe)swe.checked=c.statusWeb?.enabled!==false;
+  const swt=document.getElementById('statusWebText');if(swt)swt.value=c.statusWeb?.text||'';
+  const sre=document.getElementById('statusReelsEnabled');if(sre)sre.checked=c.statusReels?.enabled!==false;
+  const srt=document.getElementById('statusReelsText');if(srt)srt.value=c.statusReels?.text||'';
+}
+
 </script>
 </body>
 </html>
